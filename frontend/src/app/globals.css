@@ -1,69 +1,103 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
-    --background: #090d16;
-    --foreground: #f1f5f9;
-    --card: #111827;
-    --card-border: #1e293b;
-    --accent-emerald: #10b981;
-    --accent-cyan: #06b6d4;
-    --accent-violet: #8b5cf6;
-  }
-
   body {
-    background-color: #090d16;
-    color: #f1f5f9;
+    background-color: #f8fafc;
+    color: #0f172a;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Glassmorphism utility classes */
-.glass-panel {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Institutional Card Styling */
+.kite-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
-.glass-card {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+.kite-card-header {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1rem 1.25rem;
+  background-color: #ffffff;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
 }
 
-.glass-card:hover {
-  border-color: rgba(6, 182, 212, 0.4);
-  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.12);
-  transform: translateY(-2px);
+/* KiTE Navy Header */
+.kite-header-bg {
+  background-color: #0f172a;
+  color: #ffffff;
 }
 
-.gradient-text-kite {
-  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Buttons & Accents */
+.btn-kite-primary {
+  background-color: #1d4ed8;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.15s ease-in-out;
+}
+.btn-kite-primary:hover {
+  background-color: #1e40af;
 }
 
-.gradient-text-emerald {
-  background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.btn-kite-secondary {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #cbd5e1;
+  transition: all 0.15s ease-in-out;
+}
+.btn-kite-secondary:hover {
+  background-color: #e2e8f0;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Clean Input Styling */
+.kite-input {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #0f172a;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease;
 }
-::-webkit-scrollbar-track {
-  background: #090d16;
+.kite-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+
+/* Table Styling */
+.kite-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+
+.kite-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.kite-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+  color: #1e293b;
+}
+
+.kite-table tr:hover td {
+  background-color: #f8fafc;
 }

@@ -2,39 +2,40 @@
 
 import React, { useState, useEffect } from "react";
 import { API_BASE, useAuth } from "@/context/AuthContext";
-import { Users, CheckCircle, Search, Filter, Cpu, Plus, Edit3, Award, BookOpen, Layers } from "lucide-react";
+import { Users, CheckCircle2, Clock, Filter, Search, Award, ExternalLink, Edit3, X, Check } from "lucide-react";
+import { GithubIcon } from "./Icons";
 
 export const FacultyDashboard: React.FC = () => {
   const { token, user } = useAuth();
-  const [students, setStudents] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedBatch, setSelectedBatch] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"projects" | "students">("projects");
 
-  // Edit Modal State
+  // Editing student skill / status modal
   const [editingStudent, setEditingStudent] = useState<any | null>(null);
-  const [skillInput, setSkillInput] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [updatingStudent, setUpdatingStudent] = useState(false);
 
   const fetchFacultyData = async () => {
     setLoading(true);
     try {
-      const [studRes, projRes] = await Promise.all([
-        fetch(`${API_BASE}/students?limit=100`),
+      const [projRes, studRes] = await Promise.all([
         fetch(`${API_BASE}/projects`),
+        fetch(`${API_BASE}/students?limit=50`),
       ]);
 
-      if (studRes.ok) {
-        const sData = await studRes.json();
-        setStudents(sData.students);
-      }
       if (projRes.ok) {
         const pData = await projRes.json();
         setProjects(pData);
       }
+      if (studRes.ok) {
+        const sData = await studRes.json();
+        setStudents(sData.students || []);
+      }
     } catch (err) {
-      console.error("Error fetching faculty data:", err);
+      console.error("Error loading faculty data:", err);
     } finally {
       setLoading(false);
     }
@@ -42,33 +43,30 @@ export const FacultyDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchFacultyData();
-  }, [token]);
+  }, []);
 
-  const handleVerifyProject = async (projectId: number) => {
+  const handleVerifyProject = async (projectId: number, newStatus: string) => {
     try {
-      const res = await fetch(`${API_BASE}/projects/${projectId}`, {
+      const res = await fetch(`${API_BASE}/projects/${projectId}/status?status=${encodeURIComponent(newStatus)}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          status: "Verified",
-          assigned_faculty_id: user?.id,
-        }),
       });
 
       if (res.ok) {
         fetchFacultyData();
       }
     } catch (err) {
-      console.error("Error verifying project:", err);
+      console.error("Error updating project status:", err);
     }
   };
 
-  const handleSaveStudentAssessment = async () => {
+  const handleSaveStudentEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!editingStudent) return;
-    setSaving(true);
+    setUpdatingStudent(true);
+
     try {
       const res = await fetch(`${API_BASE}/students/${editingStudent.id}`, {
         method: "PUT",
@@ -77,12 +75,10 @@ export const FacultyDashboard: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          attendance_pct: editingStudent.attendance_pct,
-          skills: editingStudent.skills,
           placement_status: editingStudent.placement_status,
-          company_tier: editingStudent.company_tier,
           company_name: editingStudent.company_name,
-          package_lpa: editingStudent.package_lpa,
+          package_lpa: parseFloat(editingStudent.package_lpa) || 0,
+          skills: editingStudent.skills,
         }),
       });
 
@@ -91,241 +87,282 @@ export const FacultyDashboard: React.FC = () => {
         fetchFacultyData();
       }
     } catch (err) {
-      console.error("Error updating student:", err);
+      console.error("Error updating student profile:", err);
     } finally {
-      setSaving(false);
+      setUpdatingStudent(false);
     }
   };
+
+  const filteredProjects = projects.filter((p) => {
+    const matchesBatch = selectedBatch === "All" || p.batch === selectedBatch;
+    return matchesBatch;
+  });
 
   const filteredStudents = students.filter((s) => {
     const matchesBatch = selectedBatch === "All" || s.batch === selectedBatch;
     const matchesSearch =
       s.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.roll_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.email.toLowerCase().includes(searchTerm.toLowerCase());
+      s.roll_number.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesBatch && matchesSearch;
   });
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Faculty Header Banner */}
-      <div className="glass-card rounded-2xl p-6 border border-violet-500/20 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Faculty Banner */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-semibold">
-            <Users className="w-3.5 h-3.5" /> Faculty Mentor Workspace
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
+            <Users className="w-3.5 h-3.5" /> Faculty Mentor Portal
           </div>
-          <h2 className="text-2xl md:text-3xl font-black text-white mt-1">
-            Student Skill Matrix & Project Verification
+          <h2 className="text-xl md:text-2xl font-bold text-slate-900 mt-1">
+            Welcome, {user?.full_name}
           </h2>
-          <p className="text-sm text-slate-400">
-            Review student portfolios across 3 active KiTE batches, verify AI prototypes, and update skill matrices.
+          <p className="text-xs text-slate-600">
+            Department of Artificial Intelligence & Data Science • Academic & Prototype Verification Queue
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right bg-slate-900/60 border border-slate-800 p-3 rounded-xl">
-            <span className="text-xs text-slate-400 block font-medium">Pending Prototype Reviews</span>
-            <span className="text-xl font-bold text-amber-400">
-              {projects.filter((p) => p.status === "In Progress").length} Projects
-            </span>
+        {/* Sub Navigation Tabs */}
+        <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
+          <button
+            onClick={() => setActiveTab("projects")}
+            className={`px-3 py-1.5 rounded-md transition ${
+              activeTab === "projects" ? "bg-blue-700 text-white shadow" : "text-slate-700 hover:text-slate-900"
+            }`}
+          >
+            Prototype Verification ({projects.filter((p) => p.status === "Pending").length})
+          </button>
+          <button
+            onClick={() => setActiveTab("students")}
+            className={`px-3 py-1.5 rounded-md transition ${
+              activeTab === "students" ? "bg-blue-700 text-white shadow" : "text-slate-700 hover:text-slate-900"
+            }`}
+          >
+            Assigned Student Roster ({students.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-slate-400" />
+          <span className="font-bold text-slate-700">Batch Filter:</span>
+          <select
+            value={selectedBatch}
+            onChange={(e) => setSelectedBatch(e.target.value)}
+            className="kite-input text-xs"
+          >
+            <option value="All">All 3 Batches</option>
+            <option value="SOI Placement Batch">Batch 1: SOI Placement</option>
+            <option value="3rd Year AI & DS Batch">Batch 2: 3rd Year AI & DS</option>
+            <option value="2nd Year AI & DS Batch">Batch 3: 2nd Year AI & DS</option>
+          </select>
+        </div>
+
+        {activeTab === "students" && (
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search student name or roll no..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="kite-input w-full pl-9"
+            />
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Lab Projects Pending Review Section */}
-      <div className="glass-card p-6 rounded-2xl border-slate-800 space-y-4">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <Layers className="w-5 h-5 text-cyan-400" /> Innovation Lab Prototypes & Reviews
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((proj) => (
-            <div
-              key={proj.id}
-              className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between space-y-3 hover:border-cyan-500/40 transition"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800 text-cyan-300 border border-slate-700">
-                    {proj.batch}
-                  </span>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      proj.status === "Verified"
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                        : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                    }`}
-                  >
-                    {proj.status}
-                  </span>
-                </div>
-
-                <h4 className="text-base font-bold text-white leading-snug">{proj.title}</h4>
-                <p className="text-xs text-slate-400 line-clamp-2">{proj.description}</p>
-              </div>
-
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Student:</span>
-                  <span className="font-semibold text-slate-200">{proj.student_name}</span>
-                </div>
-                {proj.accuracy_metric && (
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Accuracy/Metric:</span>
-                    <span className="font-bold text-emerald-400">{proj.accuracy_metric}</span>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-1">
-                  {proj.github_url && (
-                    <a
-                      href={proj.github_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs text-cyan-400 hover:underline font-mono"
-                    >
-                      GitHub Repo →
-                    </a>
-                  )}
-                  {proj.status !== "Verified" ? (
-                    <button
-                      onClick={() => handleVerifyProject(proj.id)}
-                      className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition"
-                    >
-                      <CheckCircle className="w-3.5 h-3.5" /> Verify
-                    </button>
-                  ) : (
-                    <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold">
-                      <CheckCircle className="w-3.5 h-3.5" /> Verified by {proj.assigned_faculty_name || "Faculty"}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Student Roster Filter & Assessment */}
-      <div className="glass-card p-6 rounded-2xl border-slate-800 space-y-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-violet-400" /> Student Profile & Skill Assessment
+      {/* TAB 1: Prototype Verification Queue */}
+      {activeTab === "projects" && (
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <h3 className="font-bold text-slate-900 text-base border-b border-slate-100 pb-3 flex items-center justify-between">
+            <span>Submitted Student AI Models & Prototypes</span>
+            <span className="text-xs font-normal text-slate-500">
+              Review and verify model metrics before publishing
+            </span>
           </h3>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Search */}
-            <div className="relative flex-1 md:w-64">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search name, roll no..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredProjects.length === 0 ? (
+              <p className="text-xs text-slate-500 col-span-2 text-center py-6">No prototype submissions match the selected batch.</p>
+            ) : (
+              filteredProjects.map((proj) => (
+                <div key={proj.id} className="p-4 rounded-lg border border-slate-200 bg-slate-50 space-y-3 flex flex-col justify-between">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-800">
+                        {proj.batch}
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                          proj.status === "Verified"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : "bg-amber-100 text-amber-800 border border-amber-200"
+                        }`}
+                      >
+                        {proj.status}
+                      </span>
+                    </div>
 
-            {/* Batch Filter */}
-            <select
-              value={selectedBatch}
-              onChange={(e) => setSelectedBatch(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-            >
-              <option value="All">All Batches</option>
-              <option value="SOI Placement Batch">Batch 1: SOI Placement</option>
-              <option value="3rd Year AI & DS Batch">Batch 2: 3rd Year AI & DS</option>
-              <option value="2nd Year AI & DS Batch">Batch 3: 2nd Year AI & DS</option>
-            </select>
+                    <h4 className="font-bold text-slate-900 text-sm">{proj.title}</h4>
+                    <p className="text-xs text-slate-600 line-clamp-2">{proj.description}</p>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    {proj.accuracy_metric && (
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-slate-500 font-medium">Metric Result:</span>
+                        <span className="font-bold text-blue-800">{proj.accuracy_metric}</span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-1">
+                      {proj.tech_stack?.map((t: string) => (
+                        <span key={t} className="text-[10px] bg-white border border-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-mono">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs">
+                      <div className="flex items-center gap-3">
+                        {proj.github_url && (
+                          <a href={proj.github_url} target="_blank" rel="noreferrer" className="text-blue-700 font-bold hover:underline flex items-center gap-1">
+                            <GithubIcon className="w-3.5 h-3.5" /> Code
+                          </a>
+                        )}
+                        {proj.demo_url && (
+                          <a href={proj.demo_url} target="_blank" rel="noreferrer" className="text-emerald-700 font-bold hover:underline flex items-center gap-1">
+                            <ExternalLink className="w-3.5 h-3.5" /> Live Demo
+                          </a>
+                        )}
+                      </div>
+
+                      {proj.status === "Pending" ? (
+                        <button
+                          onClick={() => handleVerifyProject(proj.id, "Verified")}
+                          className="px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold text-[11px] transition flex items-center gap-1 shadow"
+                        >
+                          <Check className="w-3.5 h-3.5" /> Approve Model
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleVerifyProject(proj.id, "Pending")}
+                          className="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded font-bold text-[11px] transition"
+                        >
+                          Revoke Verification
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
+      )}
 
-        {/* Student Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStudents.map((s) => (
-            <div
-              key={s.id}
-              className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 space-y-3 hover:border-violet-500/40 transition"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4 className="font-bold text-white text-base">{s.full_name}</h4>
-                  <p className="text-xs text-slate-400 font-mono">Roll: {s.roll_number}</p>
-                </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-slate-700">
-                  {s.batch}
-                </span>
-              </div>
+      {/* TAB 2: Assigned Student Roster */}
+      {activeTab === "students" && (
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm">
+            Assigned Student Directory
+          </div>
 
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Placement Status:</span>
-                  <span
-                    className={`font-semibold ${
-                      s.placement_status === "Placed"
-                        ? "text-emerald-400"
-                        : s.placement_status === "Higher Studies"
-                        ? "text-violet-400"
-                        : "text-amber-400"
-                    }`}
-                  >
-                    {s.placement_status} {s.company_name ? `(${s.company_name})` : ""}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Attendance:</span>
-                  <span className="font-bold text-slate-200">{s.attendance_pct}%</span>
-                </div>
-              </div>
+          <div className="overflow-x-auto">
+            <table className="kite-table text-xs">
+              <thead>
+                <tr>
+                  <th>Roll No</th>
+                  <th>Student Name</th>
+                  <th>Batch</th>
+                  <th>Placement Status</th>
+                  <th>Skills</th>
+                  <th>Attendance</th>
+                  <th className="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-6 text-slate-500">No matching student records found.</td>
+                  </tr>
+                ) : (
+                  filteredStudents.map((s) => (
+                    <tr key={s.id}>
+                      <td className="font-mono font-bold text-blue-700">{s.roll_number}</td>
+                      <td>
+                        <div className="font-bold text-slate-900">{s.full_name}</div>
+                        <div className="text-[10px] text-slate-500">{s.email}</div>
+                      </td>
+                      <td>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                          {s.batch}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                            s.placement_status === "Placed"
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                              : "bg-slate-100 text-slate-700"
+                          }`}
+                        >
+                          {s.placement_status}
+                        </span>
+                        {s.company_name && (
+                          <div className="text-[10px] text-slate-600 font-semibold mt-0.5">{s.company_name}</div>
+                        )}
+                      </td>
+                      <td className="max-w-xs">
+                        <div className="flex flex-wrap gap-1">
+                          {s.skills?.map((sk: string) => (
+                            <span key={sk} className="text-[9px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">
+                              {sk}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="font-bold text-slate-800">{s.attendance_pct}%</td>
+                      <td className="text-center">
+                        <button
+                          onClick={() => setEditingStudent(s)}
+                          className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded font-bold transition flex items-center gap-1 mx-auto"
+                        >
+                          <Edit3 className="w-3 h-3 text-blue-700" /> Edit Record
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-              {/* Skills Tags */}
-              <div className="flex flex-wrap gap-1 pt-1">
-                {s.skills?.map((sk: string) => (
-                  <span
-                    key={sk}
-                    className="text-[10px] px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-300 border border-violet-500/20"
-                  >
-                    {sk}
-                  </span>
-                ))}
-              </div>
-
-              <button
-                onClick={() => setEditingStudent(s)}
-                className="w-full mt-2 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition"
-              >
-                <Edit3 className="w-3.5 h-3.5 text-cyan-400" /> Assess Skills & Records
+      {/* Edit Student Record Modal */}
+      {editingStudent && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">
+                Update Student Record - {editingStudent.full_name}
+              </h3>
+              <button onClick={() => setEditingStudent(null)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
               </button>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Edit Student Modal */}
-      {editingStudent && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-scaleUp">
-            <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">
-              Faculty Assessment for {editingStudent.full_name} ({editingStudent.roll_number})
-            </h3>
-
-            <div className="space-y-3 text-xs">
+            <form onSubmit={handleSaveStudentEdit} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Attendance Percentage (%)</label>
-                <input
-                  type="number"
-                  value={editingStudent.attendance_pct}
-                  onChange={(e) => setEditingStudent({ ...editingStudent, attendance_pct: parseFloat(e.target.value) })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-300 font-semibold mb-1">Placement Status</label>
+                <label className="block text-slate-700 font-bold mb-1">Placement Status</label>
                 <select
                   value={editingStudent.placement_status}
                   onChange={(e) => setEditingStudent({ ...editingStudent, placement_status: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="kite-input w-full"
                 >
                   <option value="Unplaced">Unplaced</option>
                   <option value="Placed">Placed</option>
@@ -333,32 +370,30 @@ export const FacultyDashboard: React.FC = () => {
                 </select>
               </div>
 
-              {editingStudent.placement_status === "Placed" && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Company Name</label>
-                    <input
-                      type="text"
-                      value={editingStudent.company_name || ""}
-                      onChange={(e) => setEditingStudent({ ...editingStudent, company_name: e.target.value })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Package (LPA)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      value={editingStudent.package_lpa || 0}
-                      onChange={(e) => setEditingStudent({ ...editingStudent, package_lpa: parseFloat(e.target.value) })}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-                    />
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Company Name</label>
+                <input
+                  type="text"
+                  value={editingStudent.company_name || ""}
+                  onChange={(e) => setEditingStudent({ ...editingStudent, company_name: e.target.value })}
+                  placeholder="e.g. Zoho Corporation"
+                  className="kite-input w-full"
+                />
+              </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Assessed Skills (Comma Separated)</label>
+                <label className="block text-slate-700 font-bold mb-1">Salary Package (LPA)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={editingStudent.package_lpa || 0}
+                  onChange={(e) => setEditingStudent({ ...editingStudent, package_lpa: e.target.value })}
+                  className="kite-input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Skills (Comma Separated)</label>
                 <input
                   type="text"
                   value={editingStudent.skills?.join(", ") || ""}
@@ -368,26 +403,27 @@ export const FacultyDashboard: React.FC = () => {
                       skills: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
                     })
                   }
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="kite-input w-full"
                 />
               </div>
-            </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-              <button
-                onClick={() => setEditingStudent(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveStudentAssessment}
-                disabled={saving}
-                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg"
-              >
-                {saving ? "Saving..." : "Save Assessment"}
-              </button>
-            </div>
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setEditingStudent(null)}
+                  className="btn-kite-secondary text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatingStudent}
+                  className="btn-kite-primary text-xs"
+                >
+                  {updatingStudent ? "Saving..." : "Save Record"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
