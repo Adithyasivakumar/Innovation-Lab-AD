@@ -96,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email = "faculty1@kite.ac.in";
       pass = "faculty123";
     } else if (role === "student") {
-      email = "student@kite.ac.in";
+      email = "23aia09anushwathi@soi.kgkite.ac.in";
       pass = "student123";
     }
 

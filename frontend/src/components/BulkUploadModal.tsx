@@ -53,21 +53,21 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({ onClose, onSuc
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-            <Upload className="w-5 h-5 text-blue-700" /> Bulk Import Student Roster (CSV / Excel)
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white border border-slate-300 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h3 className="font-extrabold text-black text-base flex items-center gap-2">
+            <Upload className="w-5 h-5 text-blue-600" /> Bulk Import Student Roster (CSV / Excel)
           </h3>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-black">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-4 text-xs">
-          <p className="text-slate-600 leading-relaxed">
+          <p className="text-slate-700 leading-relaxed font-medium">
             Upload a CSV or Excel file containing student records. Required columns:
-            <span className="block font-mono bg-slate-50 p-2 rounded text-blue-900 border border-slate-200 mt-1">
+            <span className="block font-mono bg-slate-100 p-2 rounded text-blue-900 font-bold border border-slate-200 mt-1">
               full_name, email, roll_number, batch, placement_status, company_name, package_lpa, skills
             </span>
           </p>
@@ -83,26 +83,26 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({ onClose, onSuc
             />
             <label
               htmlFor="bulk-file-input"
-              className="cursor-pointer text-blue-700 hover:underline font-bold block text-xs"
+              className="cursor-pointer text-blue-600 hover:underline font-extrabold block text-xs"
             >
               {file ? file.name : "Click to select CSV/Excel file"}
             </label>
-            <span className="text-slate-400 text-[10px]">Supports .csv, .xlsx up to 10MB</span>
+            <span className="text-slate-400 text-[10px] font-semibold">Supports .csv, .xlsx up to 10MB</span>
           </div>
 
           {resultMsg && (
             <div className="space-y-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
               {resultMsg.created > 0 && (
-                <div className="flex items-center gap-2 text-emerald-800 font-bold">
+                <div className="flex items-center gap-2 text-blue-700 font-bold">
                   <CheckCircle className="w-4 h-4" /> Successfully imported {resultMsg.created} student records!
                 </div>
               )}
               {resultMsg.errors.length > 0 && (
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-amber-800 font-bold">
+                  <div className="flex items-center gap-2 text-red-700 font-bold">
                     <AlertCircle className="w-4 h-4" /> Import Details:
                   </div>
-                  <ul className="list-disc list-inside text-[11px] text-slate-600 max-h-32 overflow-y-auto">
+                  <ul className="list-disc list-inside text-[11px] text-slate-700 max-h-32 overflow-y-auto">
                     {resultMsg.errors.map((err, i) => (
                       <li key={i}>{err}</li>
                     ))}
@@ -113,14 +113,14 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({ onClose, onSuc
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-          <button onClick={onClose} className="btn-kite-secondary text-xs">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+          <button onClick={onClose} className="btn-secondary text-xs font-bold">
             Close
           </button>
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="btn-kite-primary text-xs shadow disabled:opacity-50"
+            className="btn-primary text-xs font-bold shadow-xs disabled:opacity-50"
           >
             {uploading ? "Importing..." : "Start Bulk Import"}
           </button>

@@ -78,51 +78,51 @@ export const FacultyDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner Hero Card */}
-      <div className="bg-[#0f172a] text-white rounded-xl p-6 sm:p-7 shadow-xs border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* Top Jet Black Hero Banner */}
+      <div className="bg-black text-white rounded-xl p-6 sm:p-7 shadow-xs border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded border border-blue-500/20">
-            <Users className="w-3.5 h-3.5" /> Faculty Innovation Mentor Portal
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 bg-blue-950/60 px-2.5 py-0.5 rounded border border-blue-800/80">
+            <Users className="w-3.5 h-3.5" /> Faculty Innovation Portal
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
             Welcome, {user?.full_name}
           </h2>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-zinc-400 font-semibold">
             School of Innovation • Artificial Intelligence & Data Science Mentor Review Queue
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg text-center min-w-28">
-            <div className="text-xs text-slate-400 font-semibold uppercase">Pending Models</div>
-            <div className="text-xl font-bold text-amber-400">{pendingCount}</div>
+          <div className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg text-center min-w-28">
+            <div className="text-xs text-zinc-400 font-bold uppercase">Pending Models</div>
+            <div className="text-xl font-extrabold text-blue-400">{pendingCount}</div>
           </div>
-          <div className="bg-slate-900 border border-slate-800 p-3 rounded-lg text-center min-w-28">
-            <div className="text-xs text-slate-400 font-semibold uppercase">Verified Models</div>
-            <div className="text-xl font-bold text-emerald-400">{verifiedCount}</div>
+          <div className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg text-center min-w-28">
+            <div className="text-xs text-zinc-400 font-bold uppercase">Verified Models</div>
+            <div className="text-xl font-extrabold text-white">{verifiedCount}</div>
           </div>
         </div>
       </div>
 
-      {/* Navigation & Controls */}
+      {/* Navigation Controls */}
       <div className="ent-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
+        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-bold">
           <button
             onClick={() => setActiveTab("projects")}
-            className={`px-4 py-1.5 rounded-md transition-colors ${
+            className={`px-4 py-1.5 rounded transition-colors ${
               activeTab === "projects"
-                ? "bg-[#0f172a] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-black text-white shadow-xs"
+                : "text-slate-700 hover:text-black"
             }`}
           >
             Prototype Verification Queue ({projects.length})
           </button>
           <button
             onClick={() => setActiveTab("students")}
-            className={`px-4 py-1.5 rounded-md transition-colors ${
+            className={`px-4 py-1.5 rounded transition-colors ${
               activeTab === "students"
-                ? "bg-[#0f172a] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-black text-white shadow-xs"
+                : "text-slate-700 hover:text-black"
             }`}
           >
             Assigned Student Roster ({students.length})
@@ -160,7 +160,7 @@ export const FacultyDashboard: React.FC = () => {
       {activeTab === "projects" ? (
         <div className="space-y-4">
           {filteredProjects.length === 0 ? (
-            <div className="ent-card p-12 text-center text-xs text-slate-500">
+            <div className="ent-card p-12 text-center text-xs text-slate-500 font-medium">
               No AI prototype models matching the criteria.
             </div>
           ) : (
@@ -169,35 +169,35 @@ export const FacultyDashboard: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-slate-900 text-sm">{p.title}</h4>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                      <h4 className="font-extrabold text-black text-sm">{p.title}</h4>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded border ${
                         p.status === "Verified"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
                           : p.status === "Pending"
-                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          ? "bg-amber-50 text-amber-800 border-amber-200"
                           : "bg-red-50 text-red-700 border-red-200"
                       }`}>
                         {p.status}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1">{p.description}</p>
+                    <p className="text-xs text-slate-700 mt-1">{p.description}</p>
                   </div>
 
-                  <div className="text-xs text-slate-500 sm:text-right">
-                    <div>Submitted by: <strong className="text-slate-900">{p.student_name || "Student"}</strong></div>
-                    <div className="font-mono text-[11px] text-slate-400">Batch: {p.batch}</div>
+                  <div className="text-xs text-slate-600 sm:text-right">
+                    <div>Submitted by: <strong className="text-black font-extrabold">{p.student_name || "Student"}</strong></div>
+                    <div className="font-mono text-[11px] text-slate-500">Batch: {p.batch}</div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex flex-wrap items-center gap-2">
                     {p.accuracy_metric && (
-                      <span className="bg-blue-50 text-blue-800 text-[11px] font-semibold px-2.5 py-0.5 rounded border border-blue-200">
+                      <span className="bg-slate-100 text-black text-[11px] font-bold px-2.5 py-0.5 rounded border border-slate-200">
                         Metric: {p.accuracy_metric}
                       </span>
                     )}
                     {p.tech_stack?.map((t: string, idx: number) => (
-                      <span key={idx} className="bg-slate-100 text-slate-700 text-[11px] font-semibold px-2 py-0.5 rounded border border-slate-200">
+                      <span key={idx} className="bg-slate-100 text-slate-800 text-[11px] font-bold px-2 py-0.5 rounded border border-slate-200">
                         {t}
                       </span>
                     ))}
@@ -209,7 +209,7 @@ export const FacultyDashboard: React.FC = () => {
                         href={p.github_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="btn-secondary text-xs py-1 px-2.5 gap-1"
+                        className="btn-secondary text-xs py-1 px-2.5 gap-1 font-bold"
                       >
                         <GithubIcon className="w-3.5 h-3.5" /> Repository
                       </a>
@@ -218,14 +218,14 @@ export const FacultyDashboard: React.FC = () => {
                     {p.status !== "Verified" ? (
                       <button
                         onClick={() => handleUpdateProjectStatus(p.id, "Verified")}
-                        className="btn-primary text-xs py-1 px-3 gap-1 bg-emerald-600 hover:bg-emerald-700 border-emerald-600"
+                        className="btn-primary text-xs py-1 px-3 gap-1 font-bold"
                       >
                         <ShieldCheck className="w-3.5 h-3.5" /> Verify Model
                       </button>
                     ) : (
                       <button
                         onClick={() => handleUpdateProjectStatus(p.id, "Pending")}
-                        className="btn-secondary text-xs py-1 px-2.5 text-amber-700 border-amber-200 bg-amber-50 hover:bg-amber-100"
+                        className="btn-secondary text-xs py-1 px-2.5 text-slate-800 border-slate-300 bg-slate-100 hover:bg-slate-200 font-bold"
                       >
                         <RefreshCw className="w-3.5 h-3.5" /> Revoke Verification
                       </button>
@@ -238,7 +238,7 @@ export const FacultyDashboard: React.FC = () => {
         </div>
       ) : (
         <div className="ent-card overflow-hidden">
-          <div className="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm">
+          <div className="p-4 border-b border-slate-200 font-extrabold text-black text-sm">
             Assigned Student Roster
           </div>
           <div className="overflow-x-auto">
@@ -256,20 +256,20 @@ export const FacultyDashboard: React.FC = () => {
               <tbody>
                 {students.map((s) => (
                   <tr key={s.id}>
-                    <td className="font-mono font-bold text-slate-900">{s.roll_number}</td>
-                    <td className="font-bold text-slate-900">{s.full_name}</td>
-                    <td className="text-slate-600 font-medium">{s.batch}</td>
+                    <td className="font-mono font-extrabold text-black">{s.roll_number}</td>
+                    <td className="font-bold text-black">{s.full_name}</td>
+                    <td className="text-slate-700 font-medium">{s.batch}</td>
                     <td>
-                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                         s.placement_status === "Placed"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : "bg-slate-100 text-slate-600 border-slate-200"
+                          ? "bg-blue-50 text-blue-700 border-blue-200"
+                          : "bg-slate-100 text-slate-700 border-slate-200"
                       }`}>
                         {s.placement_status}
                       </span>
                     </td>
-                    <td className="font-semibold text-slate-800">{s.company_name || "—"}</td>
-                    <td className="font-bold text-slate-700">{s.attendance_pct}%</td>
+                    <td className="font-bold text-slate-900">{s.company_name || "—"}</td>
+                    <td className="font-extrabold text-black">{s.attendance_pct}%</td>
                   </tr>
                 ))}
               </tbody>

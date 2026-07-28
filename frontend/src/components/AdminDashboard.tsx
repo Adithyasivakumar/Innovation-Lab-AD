@@ -154,16 +154,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Banner Hero Card */}
-      <div className="bg-[#0f172a] text-white rounded-xl p-6 sm:p-7 shadow-xs border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* Jet Black Executive Hero Banner */}
+      <div className="bg-black text-white rounded-xl p-6 sm:p-7 shadow-xs border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded border border-blue-500/20">
-            <Shield className="w-3.5 h-3.5" /> Executive Admin Operations
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-400 bg-blue-950/60 px-2.5 py-0.5 rounded border border-blue-800/80">
+            <Shield className="w-3.5 h-3.5" /> Executive Admin Portal
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
             Welcome, {user?.full_name}
           </h2>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-zinc-400 font-semibold">
             School of Innovation • Artificial Intelligence & Data Science Vertical Dashboard
           </p>
         </div>
@@ -171,73 +171,73 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setShowAddStudentModal(true)}
-            className="btn-primary text-xs gap-1.5 shadow-xs font-semibold"
+            className="btn-primary text-xs gap-1.5 shadow-xs font-bold"
           >
             <UserPlus className="w-4 h-4" /> Add Single Student
           </button>
 
           <button
             onClick={onOpenBulkUpload}
-            className="btn-secondary text-xs gap-1.5 shadow-xs font-semibold"
+            className="btn-secondary text-xs gap-1.5 shadow-xs font-bold"
           >
             <Upload className="w-4 h-4 text-blue-600" /> Bulk CSV Import
           </button>
 
           <button
             onClick={() => setShowAnnModal(true)}
-            className="btn-secondary text-xs gap-1.5 shadow-xs font-semibold"
+            className="btn-secondary text-xs gap-1.5 shadow-xs font-bold"
           >
-            <PlusCircle className="w-4 h-4 text-amber-600" /> Post Notice
+            <PlusCircle className="w-4 h-4 text-black" /> Post Notice
           </button>
         </div>
       </div>
 
-      {/* 4 Summary Metric Cards */}
+      {/* 4 Pure White Metric Cards with High Contrast Black & Royal Blue Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="ent-card p-5 space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Total Students</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Total Students</span>
             <Users className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-3xl font-bold text-slate-900">{overview.total_students || 0}</div>
-          <div className="text-xs text-slate-500">Across 3 academic batches</div>
+          <div className="text-3xl font-extrabold text-black">{overview.total_students || 0}</div>
+          <div className="text-xs text-slate-500 font-medium">Across 3 academic batches</div>
         </div>
 
         <div className="ent-card p-5 space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Placed Students</span>
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Placed Students</span>
+            <TrendingUp className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-3xl font-bold text-emerald-700">{placement.placed_count || 0}</div>
-          <div className="text-xs text-slate-500">Highest Package: <strong className="text-slate-800">{placement.highest_package_lpa || 0} LPA</strong></div>
+          <div className="text-3xl font-extrabold text-blue-600">{placement.placed_count || 0}</div>
+          <div className="text-xs text-slate-500 font-medium">Highest: <strong className="text-black font-extrabold">{placement.highest_package_lpa || 0} LPA</strong></div>
         </div>
 
         <div className="ent-card p-5 space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Verified Models</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Verified Prototypes</span>
             <Layers className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-3xl font-bold text-blue-700">{overview.total_projects || 0}</div>
-          <div className="text-xs text-slate-500">AI/DS Prototypes Logged</div>
+          <div className="text-3xl font-extrabold text-black">{overview.total_projects || 0}</div>
+          <div className="text-xs text-slate-500 font-medium">AI/DS Models Logged</div>
         </div>
 
         <div className="ent-card p-5 space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Average Package</span>
-            <Award className="w-4 h-4 text-amber-500" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Avg Package (LPA)</span>
+            <Award className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-3xl font-bold text-amber-700">{placement.avg_package_lpa || 0} LPA</div>
-          <div className="text-xs text-slate-500">Tier 1 Companies: <strong className="text-slate-800">{placement.tier1_count || 0}</strong></div>
+          <div className="text-3xl font-extrabold text-blue-600">{placement.avg_package_lpa || 0} LPA</div>
+          <div className="text-xs text-slate-500 font-medium">Tier 1 Recruiters: <strong className="text-black font-extrabold">{placement.tier1_count || 0}</strong></div>
         </div>
       </div>
 
       {/* Batch Performance Matrix */}
       <div className="ent-card overflow-hidden">
-        <div className="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm flex items-center justify-between">
+        <div className="p-4 border-b border-slate-200 font-extrabold text-black text-sm flex items-center justify-between">
           <span>Batch Wise Performance Matrix</span>
           <button
             onClick={onNavigateDataGrid}
-            className="text-xs font-semibold text-blue-700 hover:underline"
+            className="text-xs font-bold text-blue-600 hover:underline"
           >
             Open Full Student Directory →
           </button>
@@ -257,11 +257,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <tbody>
               {batchMetrics.map((b: any) => (
                 <tr key={b.batch_name}>
-                  <td className="font-bold text-slate-900">{b.batch_name}</td>
-                  <td className="font-semibold text-slate-800">{b.total_students}</td>
-                  <td className="font-semibold text-blue-700">{b.active_lab_users}</td>
-                  <td className="font-bold text-emerald-700">{b.placed_students}</td>
-                  <td className="font-semibold text-slate-700">{b.avg_attendance}%</td>
+                  <td className="font-extrabold text-black">{b.batch_name}</td>
+                  <td className="font-bold text-slate-800">{b.total_students}</td>
+                  <td className="font-bold text-blue-600">{b.active_lab_users}</td>
+                  <td className="font-extrabold text-blue-700">{b.placed_students}</td>
+                  <td className="font-bold text-slate-700">{b.avg_attendance}%</td>
                 </tr>
               ))}
             </tbody>
@@ -269,9 +269,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Activity Stream */}
+      {/* Audit Log Stream */}
       <div className="ent-card p-6 space-y-4">
-        <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
+        <h3 className="font-extrabold text-black text-sm flex items-center gap-2 border-b border-slate-200 pb-3">
           <Activity className="w-4 h-4 text-blue-600" /> System Audit & User Activity Stream
         </h3>
 
@@ -280,13 +280,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <p className="text-xs text-slate-500 py-4 text-center">No recent activity logged.</p>
           ) : (
             auditLogs.map((log) => (
-              <div key={log.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50/60 flex items-center justify-between text-xs">
+              <div key={log.id} className="p-3 rounded border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
                 <div className="space-x-2">
-                  <span className="font-bold text-slate-900">{log.user_email}</span>
-                  <span className="text-slate-600 font-medium">({log.action})</span>
-                  <span className="text-slate-500 font-mono text-[11px]">{log.details}</span>
+                  <span className="font-bold text-black">{log.user_email}</span>
+                  <span className="text-blue-700 font-semibold">({log.action})</span>
+                  <span className="text-slate-600 font-mono text-[11px]">{log.details}</span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-mono">
+                <span className="text-[10px] text-slate-500 font-mono font-semibold">
                   {new Date(log.timestamp).toLocaleTimeString()}
                 </span>
               </div>
@@ -297,13 +297,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* ADD SINGLE STUDENT MODAL */}
       {showAddStudentModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-300 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-extrabold text-black text-base flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-blue-600" /> Create New Student Record
               </h3>
-              <button onClick={() => setShowAddStudentModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowAddStudentModal(false)} className="text-slate-400 hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -311,7 +311,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <form onSubmit={handleCreateStudentSubmit} className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Roll Number *</label>
+                  <label className="block text-slate-800 font-bold mb-1">Roll Number *</label>
                   <input
                     type="text"
                     required
@@ -322,7 +322,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Full Name *</label>
+                  <label className="block text-slate-800 font-bold mb-1">Full Name *</label>
                   <input
                     type="text"
                     required
@@ -335,7 +335,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Institutional Email *</label>
+                <label className="block text-slate-800 font-bold mb-1">Institutional Email *</label>
                 <input
                   type="email"
                   required
@@ -348,7 +348,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Academic Batch</label>
+                  <label className="block text-slate-800 font-bold mb-1">Academic Batch</label>
                   <select
                     value={sBatch}
                     onChange={(e) => setSBatch(e.target.value)}
@@ -360,7 +360,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Department</label>
+                  <label className="block text-slate-800 font-bold mb-1">Department</label>
                   <select
                     value={sDept}
                     onChange={(e) => setSDept(e.target.value)}
@@ -376,7 +376,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Placement Status</label>
+                  <label className="block text-slate-800 font-bold mb-1">Placement Status</label>
                   <select
                     value={sStatus}
                     onChange={(e) => setSStatus(e.target.value)}
@@ -388,7 +388,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Company Name</label>
+                  <label className="block text-slate-800 font-bold mb-1">Company Name</label>
                   <input
                     type="text"
                     value={sCompany}
@@ -401,7 +401,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Package (LPA)</label>
+                  <label className="block text-slate-800 font-bold mb-1">Package (LPA)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -411,7 +411,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Attendance %</label>
+                  <label className="block text-slate-800 font-bold mb-1">Attendance %</label>
                   <input
                     type="number"
                     value={sAttendance}
@@ -422,7 +422,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Skills (Comma Separated)</label>
+                <label className="block text-slate-800 font-bold mb-1">Skills (Comma Separated)</label>
                 <input
                   type="text"
                   value={sSkills}
@@ -438,7 +438,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowAddStudentModal(false)}
@@ -461,15 +461,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Notice Modal */}
       {showAnnModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-300 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <h3 className="font-extrabold text-black text-sm border-b border-slate-200 pb-3">
               Post Department Notice
             </h3>
 
             <form onSubmit={handlePostAnnouncement} className="space-y-3.5 text-xs">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Notice Title</label>
+                <label className="block text-slate-800 font-bold mb-1">Notice Title</label>
                 <input
                   type="text"
                   required
@@ -481,7 +481,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Notice Content</label>
+                <label className="block text-slate-800 font-bold mb-1">Notice Content</label>
                 <textarea
                   rows={3}
                   required
@@ -494,7 +494,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Priority</label>
+                  <label className="block text-slate-800 font-bold mb-1">Priority</label>
                   <select
                     value={annPriority}
                     onChange={(e) => setAnnPriority(e.target.value)}
@@ -506,7 +506,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Target Batch</label>
+                  <label className="block text-slate-800 font-bold mb-1">Target Batch</label>
                   <select
                     value={annBatch}
                     onChange={(e) => setAnnBatch(e.target.value)}
@@ -520,7 +520,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowAnnModal(false)}

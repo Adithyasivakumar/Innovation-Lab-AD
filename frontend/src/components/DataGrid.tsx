@@ -117,17 +117,17 @@ export const DataGrid: React.FC = () => {
       <div className="ent-card p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-xl font-extrabold text-black flex items-center gap-2">
               <FileSpreadsheet className="w-5 h-5 text-blue-600" /> Student Data Matrix Directory
             </h2>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-slate-600 font-medium mt-1">
               Comprehensive student records for Batch 1 (SOI), Batch 2 (3rd Year), and Batch 3 (2nd Year).
             </p>
           </div>
 
           <button
             onClick={handleExportCSV}
-            className="btn-primary text-xs gap-2 shadow-md"
+            className="btn-primary text-xs gap-2 font-bold shadow-xs"
           >
             <Download className="w-4 h-4" /> Export CSV Report
           </button>
@@ -221,57 +221,57 @@ export const DataGrid: React.FC = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-slate-500">Loading student records...</td>
+                  <td colSpan={8} className="text-center py-8 text-slate-500 font-medium">Loading student records...</td>
                 </tr>
               ) : sortedStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-slate-500">No matching student records found.</td>
+                  <td colSpan={8} className="text-center py-8 text-slate-500 font-medium">No matching student records found.</td>
                 </tr>
               ) : (
                 sortedStudents.map((s) => (
                   <tr key={s.id}>
-                    <td className="font-mono font-bold text-blue-700">{s.roll_number}</td>
+                    <td className="font-mono font-bold text-blue-600">{s.roll_number}</td>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center border border-blue-200 shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-black text-white font-extrabold text-xs flex items-center justify-center shrink-0">
                           {getInitials(s.full_name)}
                         </div>
                         <div>
-                          <div className="font-bold text-slate-900">{s.full_name}</div>
-                          <div className="text-xs text-slate-500">{s.email}</div>
+                          <div className="font-bold text-black">{s.full_name}</div>
+                          <div className="text-xs text-slate-500 font-mono">{s.email}</div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <span className="badge-batch">{s.batch}</span>
+                      <span className="bg-slate-100 text-black text-xs font-bold px-2 py-0.5 rounded border border-slate-200">{s.batch}</span>
                     </td>
                     <td>
                       <span
                         className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                           s.placement_status === "Placed"
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                            : "bg-slate-100 text-slate-700"
+                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            : "bg-slate-100 text-slate-700 border border-slate-200"
                         }`}
                       >
                         {s.placement_status}
                       </span>
                       {s.company_name && (
-                        <div className="text-xs text-slate-600 font-semibold mt-0.5">{s.company_name}</div>
+                        <div className="text-xs text-black font-extrabold mt-0.5">{s.company_name}</div>
                       )}
                     </td>
-                    <td className="font-bold text-emerald-700">
+                    <td className="font-extrabold text-black">
                       {s.package_lpa > 0 ? `${s.package_lpa} LPA` : "-"}
                     </td>
                     <td className="max-w-xs">
                       <div className="flex flex-wrap gap-1">
                         {s.skills?.map((sk: string) => (
-                          <span key={sk} className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">
+                          <span key={sk} className="text-[10px] bg-slate-100 text-black font-bold px-1.5 py-0.5 rounded border border-slate-200 font-mono">
                             {sk}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className="font-bold text-slate-800">{s.attendance_pct}%</td>
+                    <td className="font-bold text-black">{s.attendance_pct}%</td>
                     {user?.role === "admin" && (
                       <td className="text-center">
                         <button
@@ -291,26 +291,26 @@ export const DataGrid: React.FC = () => {
         </div>
 
         {/* Footer Pagination */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+        <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600 font-medium">
           <div>
-            Showing <strong className="text-slate-900">{sortedStudents.length}</strong> of <strong className="text-slate-900">{total}</strong> records
+            Showing <strong className="text-black font-extrabold">{sortedStudents.length}</strong> of <strong className="text-black font-extrabold">{total}</strong> records
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
+              className="p-1.5 rounded-lg bg-white border border-slate-200 text-black font-bold disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="font-bold text-slate-800">
+            <span className="font-extrabold text-black">
               Page {page} of {totalPages}
             </span>
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
+              className="p-1.5 rounded-lg bg-white border border-slate-200 text-black font-bold disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

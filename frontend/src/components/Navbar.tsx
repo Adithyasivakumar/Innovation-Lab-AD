@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { LogOut, LayoutDashboard, Database, FolderGit2, Shield, User } from "lucide-react";
 
@@ -24,13 +23,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <header className="bg-[#0f172a] text-white border-b border-slate-800 sticky top-0 z-40">
-      {/* Main Top Bar */}
+    <header className="bg-black text-white border-b border-zinc-800 sticky top-0 z-40 shadow-sm">
+      {/* Top Main Navigation Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Brand & Logo Section */}
+        {/* School of Innovation Logo & Title */}
         <div className="flex items-center gap-3.5">
-          {/* Official School of Innovation Logo Image */}
-          <div className="h-10 w-auto flex items-center justify-center bg-white p-1 rounded-lg border border-slate-700 shadow-sm shrink-0">
+          <div className="h-10 w-auto flex items-center justify-center bg-white p-1 rounded-lg border border-zinc-700 shadow-sm shrink-0">
             <img
               src="/soi-logo.jpg"
               alt="School of Innovation Logo"
@@ -38,51 +36,51 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             />
           </div>
 
-          <div className="h-7 w-px bg-slate-800 hidden sm:block" />
+          <div className="h-6 w-px bg-zinc-800 hidden sm:block" />
 
           <div>
-            <h1 className="font-bold text-base md:text-lg text-white tracking-tight leading-snug">
+            <h1 className="font-extrabold text-base md:text-lg text-white tracking-tight leading-snug">
               School of Innovation
             </h1>
-            <p className="text-xs text-slate-400 font-medium">
+            <p className="text-xs text-blue-400 font-semibold">
               Artificial Intelligence and Data Science Vertical
             </p>
           </div>
         </div>
 
-        {/* User Profile & Demo Switcher */}
+        {/* User Profile & Demo Role Switcher */}
         {user && (
           <div className="flex items-center gap-4">
-            {/* Role Selector Pill */}
-            <div className="hidden lg:flex items-center bg-slate-900/80 p-1 rounded-lg border border-slate-800">
-              <span className="text-[11px] font-semibold text-slate-400 px-2 uppercase tracking-wider">Role:</span>
+            {/* Quick Demo Switcher */}
+            <div className="hidden lg:flex items-center bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+              <span className="text-[11px] font-bold text-zinc-400 px-2.5 uppercase tracking-wider">Role:</span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => demoLogin("admin")}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded text-xs font-bold transition-all ${
                     user.role === "admin"
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-800"
                   }`}
                 >
                   Admin
                 </button>
                 <button
                   onClick={() => demoLogin("faculty")}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded text-xs font-bold transition-all ${
                     user.role === "faculty"
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-800"
                   }`}
                 >
                   Faculty
                 </button>
                 <button
                   onClick={() => demoLogin("student")}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded text-xs font-bold transition-all ${
                     user.role === "student"
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-800"
                   }`}
                 >
                   Student
@@ -90,18 +88,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               </div>
             </div>
 
-            {/* Logged User Avatar */}
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-800">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+            {/* Logged User Chip */}
+            <div className="flex items-center gap-3 pl-3 border-l border-zinc-800">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shadow-xs">
                 {getInitials(user.full_name)}
               </div>
               <div className="hidden sm:block text-left">
-                <div className="font-semibold text-xs text-white leading-tight">{user.full_name}</div>
-                <div className="text-[11px] text-slate-400 capitalize">{user.role} Account</div>
+                <div className="font-bold text-xs text-white leading-tight">{user.full_name}</div>
+                <div className="text-[11px] text-blue-400 font-semibold capitalize">{user.role} Account</div>
               </div>
               <button
                 onClick={logout}
-                className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+                className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors border border-transparent hover:border-zinc-800"
                 title="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
@@ -111,51 +109,51 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
         )}
       </div>
 
-      {/* Main Navigation Tabs */}
+      {/* Main Tab Links Strip */}
       {user && (
-        <div className="border-t border-slate-800/80 bg-slate-900/40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-1 text-xs font-semibold">
+        <div className="border-t border-zinc-800 bg-zinc-950">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-1 text-xs font-bold">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+              className={`py-3 px-4 transition-colors relative flex items-center gap-2 ${
                 activeTab === "dashboard"
-                  ? "text-blue-400 bg-slate-800/60 font-bold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
+                  ? "text-blue-400 bg-zinc-900 font-extrabold"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-900/50"
               }`}
             >
               <LayoutDashboard className="w-4 h-4" /> Dashboard Overview
               {activeTab === "dashboard" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
               )}
             </button>
 
             {(user.role === "admin" || user.role === "faculty") && (
               <button
                 onClick={() => setActiveTab("datagrid")}
-                className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+                className={`py-3 px-4 transition-colors relative flex items-center gap-2 ${
                   activeTab === "datagrid"
-                    ? "text-blue-400 bg-slate-800/60 font-bold"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
+                    ? "text-blue-400 bg-zinc-900 font-extrabold"
+                    : "text-zinc-400 hover:text-white hover:bg-zinc-900/50"
                 }`}
               >
                 <Database className="w-4 h-4" /> Student Data Matrix
                 {activeTab === "datagrid" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
                 )}
               </button>
             )}
 
             <button
               onClick={() => setActiveTab("projects")}
-              className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+              className={`py-3 px-4 transition-colors relative flex items-center gap-2 ${
                 activeTab === "projects"
-                  ? "text-blue-400 bg-slate-800/60 font-bold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
+                  ? "text-blue-400 bg-zinc-900 font-extrabold"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-900/50"
               }`}
             >
               <FolderGit2 className="w-4 h-4" /> AI Innovation Prototypes
               {activeTab === "projects" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
               )}
             </button>
           </div>
