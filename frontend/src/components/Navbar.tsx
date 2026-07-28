@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, LayoutDashboard, Database, FolderGit2, Shield, User, Award, Sparkles, BrainCircuit } from "lucide-react";
+import { LogOut, LayoutDashboard, Database, FolderGit2, Shield, User } from "lucide-react";
 
 interface NavbarProps {
   activeTab: string;
@@ -23,60 +24,65 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <header className="bg-[#0b132b] text-white border-b border-slate-800 shadow-xl sticky top-0 z-40">
-      {/* Top Main Header Strip */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80">
-        {/* School of Innovation Logo & Branding */}
+    <header className="bg-[#0f172a] text-white border-b border-slate-800 sticky top-0 z-40">
+      {/* Main Top Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Brand & Logo Section */}
         <div className="flex items-center gap-3.5">
-          <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-800 text-white font-black text-xl px-3.5 py-2 rounded-2xl shadow-lg border border-blue-400/40 tracking-wider flex items-center justify-center gap-1.5 shrink-0">
-            <BrainCircuit className="w-5 h-5 text-amber-300" /> SoI
+          {/* Official School of Innovation Logo Image */}
+          <div className="h-10 w-auto flex items-center justify-center bg-white p-1 rounded-lg border border-slate-700 shadow-sm shrink-0">
+            <img
+              src="/soi-logo.jpg"
+              alt="School of Innovation Logo"
+              className="h-8 w-auto object-contain rounded"
+            />
           </div>
+
+          <div className="h-7 w-px bg-slate-800 hidden sm:block" />
+
           <div>
-            <h1 className="font-black text-lg md:text-xl text-white tracking-tight leading-none">
+            <h1 className="font-bold text-base md:text-lg text-white tracking-tight leading-snug">
               School of Innovation
             </h1>
-            <p className="text-xs font-bold text-blue-400 mt-1 flex items-center gap-1.5">
-              <span>Artificial Intelligence and Data Science Vertical</span>
-              <span className="bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                Innovation Portal
-              </span>
+            <p className="text-xs text-slate-400 font-medium">
+              Artificial Intelligence and Data Science Vertical
             </p>
           </div>
         </div>
 
-        {/* User Profile & Role Switcher */}
+        {/* User Profile & Demo Switcher */}
         {user && (
           <div className="flex items-center gap-4">
-            {/* Quick Role Switcher */}
-            <div className="hidden lg:flex items-center bg-slate-900/90 p-1.5 rounded-xl border border-slate-800 shadow-inner">
-              <span className="text-[10px] font-bold text-slate-400 px-2.5 uppercase tracking-wider">Role:</span>
+            {/* Role Selector Pill */}
+            <div className="hidden lg:flex items-center bg-slate-900/80 p-1 rounded-lg border border-slate-800">
+              <span className="text-[11px] font-semibold text-slate-400 px-2 uppercase tracking-wider">Role:</span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => demoLogin("admin")}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
                     user.role === "admin"
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-400 hover:text-white hover:bg-slate-800"
                   }`}
                 >
                   Admin
                 </button>
                 <button
                   onClick={() => demoLogin("faculty")}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
                     user.role === "faculty"
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-400 hover:text-white hover:bg-slate-800"
                   }`}
                 >
                   Faculty
                 </button>
                 <button
                   onClick={() => demoLogin("student")}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
                     user.role === "student"
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-400 hover:text-white hover:bg-slate-800"
                   }`}
                 >
                   Student
@@ -84,18 +90,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               </div>
             </div>
 
-            {/* Logged User Chip */}
+            {/* Logged User Avatar */}
             <div className="flex items-center gap-3 pl-3 border-l border-slate-800">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 text-white font-bold text-xs flex items-center justify-center shadow-md border border-blue-400/30">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                 {getInitials(user.full_name)}
               </div>
               <div className="hidden sm:block text-left">
-                <div className="font-bold text-xs text-white leading-snug">{user.full_name}</div>
-                <div className="text-[10px] font-semibold text-blue-400 capitalize">{user.role} Account</div>
+                <div className="font-semibold text-xs text-white leading-tight">{user.full_name}</div>
+                <div className="text-[11px] text-slate-400 capitalize">{user.role} Account</div>
               </div>
               <button
                 onClick={logout}
-                className="p-2 bg-slate-900 hover:bg-red-950/60 text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-900/50 rounded-xl transition-all shadow-xs"
+                className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
                 title="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
@@ -105,52 +111,54 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
         )}
       </div>
 
-      {/* Main Tab Navigation Bar */}
+      {/* Main Navigation Tabs */}
       {user && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-1 text-xs">
-          <button
-            onClick={() => setActiveTab("dashboard")}
-            className={`py-3 px-4 font-bold transition-all relative flex items-center gap-2 ${
-              activeTab === "dashboard"
-                ? "text-blue-400 bg-slate-900/60 font-extrabold"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/30"
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4" /> My Workspace
-            {activeTab === "dashboard" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full" />
-            )}
-          </button>
-
-          {(user.role === "admin" || user.role === "faculty") && (
+        <div className="border-t border-slate-800/80 bg-slate-900/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-1 text-xs font-semibold">
             <button
-              onClick={() => setActiveTab("datagrid")}
-              className={`py-3 px-4 font-bold transition-all relative flex items-center gap-2 ${
-                activeTab === "datagrid"
-                  ? "text-blue-400 bg-slate-900/60 font-extrabold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/30"
+              onClick={() => setActiveTab("dashboard")}
+              className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+                activeTab === "dashboard"
+                  ? "text-blue-400 bg-slate-800/60 font-bold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
               }`}
             >
-              <Database className="w-4 h-4" /> Student Data Matrix
-              {activeTab === "datagrid" && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full" />
+              <LayoutDashboard className="w-4 h-4" /> Dashboard Overview
+              {activeTab === "dashboard" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
               )}
             </button>
-          )}
 
-          <button
-            onClick={() => setActiveTab("projects")}
-            className={`py-3 px-4 font-bold transition-all relative flex items-center gap-2 ${
-              activeTab === "projects"
-                ? "text-blue-400 bg-slate-900/60 font-extrabold"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/30"
-            }`}
-          >
-            <FolderGit2 className="w-4 h-4" /> AI Innovation Prototypes
-            {activeTab === "projects" && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full" />
+            {(user.role === "admin" || user.role === "faculty") && (
+              <button
+                onClick={() => setActiveTab("datagrid")}
+                className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+                  activeTab === "datagrid"
+                    ? "text-blue-400 bg-slate-800/60 font-bold"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
+                }`}
+              >
+                <Database className="w-4 h-4" /> Student Data Matrix
+                {activeTab === "datagrid" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                )}
+              </button>
             )}
-          </button>
+
+            <button
+              onClick={() => setActiveTab("projects")}
+              className={`py-2.5 px-4 transition-colors relative flex items-center gap-2 ${
+                activeTab === "projects"
+                  ? "text-blue-400 bg-slate-800/60 font-bold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
+              }`}
+            >
+              <FolderGit2 className="w-4 h-4" /> AI Innovation Prototypes
+              {activeTab === "projects" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+              )}
+            </button>
+          </div>
         </div>
       )}
     </header>
