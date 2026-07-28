@@ -193,6 +193,46 @@ def get_analytics_summary(db: Session = Depends(get_db)):
 # ==========================================
 # STUDENT MANAGEMENT & DATA GRID
 # ==========================================
+@app.post("/api/students")
+def create_student(
+    data: schemas.StudentCreate,
+    admin_user: models.User = Depends(require_faculty_or_admin),
+    db: Session = Depends(get_db)
+):
+    existing = db.query(models.User).filter(models.User.email == data.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="User with this email already exists.")
+
+    user = models.User(
+        email=data.email,
+        password_hash=get_password_hash(data.password or "student123"),
+        full_name=data.full_name,
+        role="student",
+        avatar_url=f"https://api.dicebear.com/7.x/avataaars/svg?seed={data.roll_number}"
+    )
+    db.add(user)
+    db.flush()
+
+    sp = models.StudentProfile(
+        user_id=user.id,
+        roll_number=data.roll_number,
+        batch=data.batch,
+        department=data.department,
+        placement_status=data.placement_status,
+        company_tier=data.company_tier,
+        company_name=data.company_name,
+        package_lpa=data.package_lpa,
+        skills=data.skills,
+        attendance_pct=data.attendance_pct
+    )
+    db.add(sp)
+    db.commit()
+    db.refresh(sp)
+
+    log_audit(db, admin_user.id, "CREATE_STUDENT", f"Created student {user.full_name} ({sp.roll_number}).")
+    return {"message": "Student created successfully", "id": sp.id, "roll_number": sp.roll_number}
+
+
 @app.get("/api/students")
 def list_students(
     search: Optional[str] = None,

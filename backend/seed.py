@@ -1,433 +1,501 @@
+import sys
 import os
-from database import Base, engine, SessionLocal
-from models import User, StudentProfile, FacultyProfile, LabProject, Announcement, AuditLog
+from sqlalchemy.orm import Session
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from database import engine, Base, SessionLocal
+import models
 from auth import get_password_hash
 
-def seed_db():
+def seed_database():
+    print("Recreating database tables...")
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-    db = SessionLocal()
-    try:
-        print("Seeding database with KiTE AI & DS Innovation Lab data...")
+    db: Session = SessionLocal()
 
-        # 1. Admin User
-        admin_user = User(
+    try:
+        # 1. Admin Users
+        admin_user = models.User(
             email="admin@kite.ac.in",
             password_hash=get_password_hash("admin123"),
             full_name="Dr. A. R. Suresh (Lab Head)",
             role="admin",
-            avatar_url="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+            avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=admin"
         )
         db.add(admin_user)
-        db.commit()
 
-        # 2. Faculty Users
-        f1_user = User(
+        soi_admin = models.User(
+            email="soi.admin@kite.ac.in",
+            password_hash=get_password_hash("admin123"),
+            full_name="School of Innovation Director",
+            role="admin",
+            avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=soiadmin"
+        )
+        db.add(soi_admin)
+
+        # 2. Faculty Mentors
+        faculty_1 = models.User(
             email="faculty1@kite.ac.in",
             password_hash=get_password_hash("faculty123"),
-            full_name="Prof. K. Venkatesh",
+            full_name="Prof. S. Karthikeyan",
             role="faculty",
-            avatar_url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+            avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=karthik"
         )
-        f2_user = User(
+        db.add(faculty_1)
+        db.flush()
+
+        fp1 = models.FacultyProfile(
+            user_id=faculty_1.id,
+            employee_id="KITE-AIDS-101",
+            designation="Associate Professor",
+            specialization="Deep Learning & Computer Vision",
+            office_room="Lab Block 302"
+        )
+        db.add(fp1)
+
+        faculty_2 = models.User(
             email="faculty2@kite.ac.in",
             password_hash=get_password_hash("faculty123"),
-            full_name="Dr. M. Deepa",
+            full_name="Dr. M. Priyadharshini",
             role="faculty",
-            avatar_url="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"
+            avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=priya"
         )
-        db.add_all([f1_user, f2_user])
-        db.commit()
+        db.add(faculty_2)
+        db.flush()
 
-        # Faculty Profiles
-        fp1 = FacultyProfile(
-            user_id=f1_user.id,
-            employee_id="KITE-FAC-101",
-            designation="Professor & Lead AI Mentor",
-            specialization="Natural Language Processing & Large Language Models",
-            office_room="AI-DS Innovation Hub 302"
+        fp2 = models.FacultyProfile(
+            user_id=faculty_2.id,
+            employee_id="KITE-AIDS-102",
+            designation="Assistant Professor",
+            specialization="Generative AI & Agentic Workflows",
+            office_room="Lab Block 304"
         )
-        fp2 = FacultyProfile(
-            user_id=f2_user.id,
-            employee_id="KITE-FAC-104",
-            designation="Associate Professor",
-            specialization="Computer Vision, Autonomous Systems & Edge AI",
-            office_room="AI-DS Vision Lab 305"
-        )
-        db.add_all([fp1, fp2])
-        db.commit()
+        db.add(fp2)
 
-        # 3. Student Users across 3 Batches
-        batch1_name = "SOI Placement Batch"
-        batch2_name = "3rd Year AI & DS Batch"
-        batch3_name = "2nd Year AI & DS Batch"
-
-        student_specs = [
-            # --- Batch 1: SOI Placement Batch ---
+        # 3. Authentic Placement / Domain Students (Transcribed from Staff Sheet)
+        placement_students_data = [
             {
-                "name": "Adithya V",
-                "email": "student@kite.ac.in", # Demo student login
-                "password": "student123",
-                "roll": "7177212101",
-                "batch": batch1_name,
-                "status": "Placed",
-                "tier": "Tier 1",
-                "company": "Zoho Corporation",
-                "package": 14.5,
-                "github": "https://github.com/adithya-v-kite",
-                "leetcode": "https://leetcode.com/adithya_ai",
-                "linkedin": "https://linkedin.com/in/adithya-kite",
-                "resume": "https://kite.ac.in/resumes/7177212101.pdf",
-                "skills": ["PyTorch", "NLP", "FastAPI", "Transformers", "LLM", "Docker"],
-                "attendance": 96.0
+                "full_name": "ANUSHWATHI R",
+                "roll_number": "23AIA09",
+                "email": "23aia09anushwathi@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "ML Engineer, Software Engineer, AI Engineer",
+                "skills": ["Python", "SQL", "LangChain", "RAG Pipelines", "LLaMA", "HuggingFace Transformers", "Vector DBs (FAISS, Qdrant)", "OpenCV", "NLP"],
+                "projects": [
+                    {"title": "Mental Health Voice Coach", "desc": "AI Voice Coach providing conversational mental health support via RAG."},
+                    {"title": "Byteguard - AI Security System", "desc": "AI Security System for automated network anomaly detection."}
+                ],
+                "company_name": "Zoho Corporation",
+                "package_lpa": 8.5
             },
             {
-                "name": "Priya Dharshini R",
-                "email": "priya.r@kite.ac.in",
-                "password": "student123",
-                "roll": "7177212102",
-                "batch": batch1_name,
-                "status": "Placed",
-                "tier": "Tier 1",
-                "company": "Tiger Analytics",
-                "package": 12.0,
-                "github": "https://github.com/priyar-ai",
-                "leetcode": "https://leetcode.com/priya_d",
-                "linkedin": "https://linkedin.com/in/priyar",
-                "resume": "https://kite.ac.in/resumes/7177212102.pdf",
-                "skills": ["TensorFlow", "Computer Vision", "OpenCV", "Scikit-Learn", "Python"],
-                "attendance": 92.5
+                "full_name": "Kiruthika S",
+                "roll_number": "23CB30",
+                "email": "23cb30kiruthika@soi.kgkite.ac.in",
+                "department": "B.TECH CSBS",
+                "role_choice": "AI Engineer, GenAI/LLM Engineer, ML Engineer",
+                "skills": ["Python", "SQL", "CrewAI", "LlamaIndex", "NLP", "PyTorch"],
+                "projects": [
+                    {"title": "AI Research Assistant Agent (CrewAI)", "desc": "Multi-agent research assistant built with CrewAI and LLMs."},
+                    {"title": "Course Notes AI Assistant (RAG Chatbot)", "desc": "RAG chatbot indexing college course notes."},
+                    {"title": "Smart News Summarizer Agent", "desc": "Automated news fetching and summarization agent."}
+                ],
+                "company_name": "Cognizant",
+                "package_lpa": 6.5
             },
             {
-                "name": "Karthik Subramanian",
-                "email": "karthik.s@kite.ac.in",
-                "password": "student123",
-                "roll": "7177212103",
-                "batch": batch1_name,
-                "status": "Placed",
-                "tier": "Tier 2",
-                "company": "Bosch Global Software",
-                "package": 9.2,
-                "github": "https://github.com/karthik-subramanian",
-                "leetcode": "https://leetcode.com/karthiks",
-                "linkedin": "https://linkedin.com/in/karthiks",
-                "resume": "https://kite.ac.in/resumes/7177212103.pdf",
-                "skills": ["PyTorch", "Reinforcement Learning", "ROS", "C++", "Python"],
-                "attendance": 89.0
+                "full_name": "GOPI KRISHNA S",
+                "roll_number": "23AIA28",
+                "email": "23aia28gopikrishna@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer / SDE / Data Analyst",
+                "skills": ["Python", "SQL", "PowerBI", "Excel"],
+                "projects": [
+                    {"title": "Sales Forecasting Dashboard", "desc": "Interactive sales forecasting dashboard with time-series analysis."}
+                ],
+                "company_name": "Virtusa",
+                "package_lpa": 5.5
             },
             {
-                "name": "Sneha Krishnan",
-                "email": "sneha.k@kite.ac.in",
-                "password": "student123",
-                "roll": "7177212104",
-                "batch": batch1_name,
-                "status": "Higher Studies",
-                "tier": "N/A",
-                "company": "IIT Madras (M.Tech AI)",
-                "package": 0.0,
-                "github": "https://github.com/sneha-ai-research",
-                "leetcode": "https://leetcode.com/sneha_k",
-                "linkedin": "https://linkedin.com/in/snehak",
-                "resume": "https://kite.ac.in/resumes/7177212104.pdf",
-                "skills": ["Graph Neural Networks", "PyTorch", "Mathematical Modeling", "NLP"],
-                "attendance": 98.2
+                "full_name": "MAHESH KUMAR M",
+                "roll_number": "23AIA54",
+                "email": "23aia54maheshkumar@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "AI Engineer, Data Analyst, Robotics, Software Engineer",
+                "skills": ["Python", "SQL", "PowerBI", "Excel", "RAG", "OpenCV", "LLMs"],
+                "projects": [
+                    {"title": "RAG-Based AI Assistant using FastAPI & ChromaDB", "desc": "FastAPI powered RAG assistant with Gemini API & ChromaDB."},
+                    {"title": "Farm AI Assistant (TensorFlow + LLM)", "desc": "Smart agriculture assistant detecting crop diseases."},
+                    {"title": "Developer Analytics Dashboard", "desc": "Analytics dashboard tracking developer velocity."}
+                ],
+                "company_name": "Bosch Global Software",
+                "package_lpa": 7.0
             },
             {
-                "name": "Vijay Ananth",
-                "email": "vijay.a@kite.ac.in",
-                "password": "student123",
-                "roll": "7177212105",
-                "batch": batch1_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/vijay-ananth",
-                "leetcode": "https://leetcode.com/vijay_a",
-                "linkedin": "https://linkedin.com/in/vijay-a",
-                "resume": "https://kite.ac.in/resumes/7177212105.pdf",
-                "skills": ["Python", "FastAPI", "SQL", "Pandas", "Scikit-Learn"],
-                "attendance": 84.0
+                "full_name": "Harishankar M",
+                "roll_number": "23AIA35",
+                "email": "23aia35harishankar@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "AI Engineer, Robotics, ROS Engineer, ML Engineer",
+                "skills": ["Python", "ROS2", "PyTorch", "TensorFlow", "Scikit-learn", "CNN", "NLP", "LLMs", "FastAPI", "AWS", "GitHub Actions"],
+                "projects": [
+                    {"title": "FarmApp - AI Farm Assistant", "desc": "AI Farm assistant integrated with ROS2 and IoT sensors."},
+                    {"title": "Byteguard - AI based IDS/IPS System", "desc": "AI Intrusion detection system with instant alert dispatch."},
+                    {"title": "Autonomous Car Project", "desc": "ROS2 powered autonomous car prototype with LIDAR mapping."}
+                ],
+                "company_name": "L&T Technology Services",
+                "package_lpa": 8.0
             },
             {
-                "name": "Harini Murugan",
-                "email": "harini.m@kite.ac.in",
-                "password": "student123",
-                "roll": "7177212106",
-                "batch": batch1_name,
-                "status": "Placed",
-                "tier": "Tier 1",
-                "company": "Freshworks Inc",
-                "package": 16.0,
-                "github": "https://github.com/harini-ml",
-                "leetcode": "https://leetcode.com/harini_m",
-                "linkedin": "https://linkedin.com/in/harinim",
-                "resume": "https://kite.ac.in/resumes/7177212106.pdf",
-                "skills": ["NLP", "Bert", "LangChain", "Vector Databases", "FastAPI", "React"],
-                "attendance": 95.0
-            },
-
-            # --- Batch 2: 3rd Year AI & DS Batch ---
-            {
-                "name": "Siddharth Raj",
-                "email": "siddharth.r@kite.ac.in",
-                "password": "student123",
-                "roll": "7177222101",
-                "batch": batch2_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/sid-raj-ai",
-                "leetcode": "https://leetcode.com/sid_raj",
-                "linkedin": "https://linkedin.com/in/sidraj",
-                "resume": "https://kite.ac.in/resumes/7177222101.pdf",
-                "skills": ["TensorFlow", "Keras", "OpenCV", "Deep Learning", "Flask"],
-                "attendance": 91.0
+                "full_name": "Dhanvanth Kumar V U",
+                "roll_number": "23AIA18",
+                "email": "23aia18dhanvanth@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "AI Engineer, Data Scientist, Software Developer",
+                "skills": ["Python", "SQL", "LLMs", "Scikit-learn", "NLP", "OpenCV", "Transformers", "Flask"],
+                "projects": [
+                    {"title": "AI-Powered News Summarizer", "desc": "Extractive and abstractive news summarization engine."},
+                    {"title": "Handwritten-to-Multilingual Digital Text Converter", "desc": "OCR pipeline converting handwritten Tamil to English text."},
+                    {"title": "Turf Booking System", "desc": "Full stack turf slot booking application."}
+                ],
+                "company_name": "TCS Digital",
+                "package_lpa": 7.2
             },
             {
-                "name": "Ananya Sundaram",
-                "email": "ananya.s@kite.ac.in",
-                "password": "student123",
-                "roll": "7177222102",
-                "batch": batch2_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/ananya-ds",
-                "leetcode": "https://leetcode.com/ananyas",
-                "linkedin": "https://linkedin.com/in/ananyas",
-                "resume": "https://kite.ac.in/resumes/7177222102.pdf",
-                "skills": ["Data Science", "Pandas", "Seaborn", "Scikit-Learn", "SQL"],
-                "attendance": 94.0
+                "full_name": "KAMALESH J",
+                "roll_number": "23AIA41",
+                "email": "23aia41kamalesh@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "AI Engineer / Agentic AI / Robotics",
+                "skills": ["Python", "SQL", "ML", "ROS2", "RAG", "Transformers", "OpenCV"],
+                "projects": [
+                    {"title": "AI-Powered CAD Revision Analyzer", "desc": "Analyzes CAD revision diffs using Computer Vision."},
+                    {"title": "Brain-Tumor-Detection-Classification", "desc": "MRI Brain tumor classification with 97.2% accuracy."}
+                ],
+                "company_name": "Infosys",
+                "package_lpa": 6.0
             },
             {
-                "name": "Deepak Balaji",
-                "email": "deepak.b@kite.ac.in",
-                "password": "student123",
-                "roll": "7177222103",
-                "batch": batch2_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/deepak-b",
-                "leetcode": "https://leetcode.com/deepakb",
-                "linkedin": "https://linkedin.com/in/deepakb",
-                "resume": "https://kite.ac.in/resumes/7177222103.pdf",
-                "skills": ["PyTorch", "YOLOv8", "Computer Vision", "Jetson Nano"],
-                "attendance": 88.5
+                "full_name": "TURAGA VIJAYAAKASH",
+                "roll_number": "23AIB54",
+                "email": "23aib54vijayaakash@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer / Data Analyst / ML Engineer",
+                "skills": ["Python", "Excel", "SQL", "Power BI", "ML", "Statistics", "AWS"],
+                "projects": [
+                    {"title": "AI Website conversion rate optimizer", "desc": "Predicts user dropoff and optimizes conversion funnel."},
+                    {"title": "Business intelligence dashboard", "desc": "Interactive BI dashboard with AWS QuickSight integration."}
+                ],
+                "company_name": "Wipro",
+                "package_lpa": 5.8
             },
             {
-                "name": "Kavitha N",
-                "email": "kavitha.n@kite.ac.in",
-                "password": "student123",
-                "roll": "7177222104",
-                "batch": batch2_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/kavitha-n",
-                "leetcode": "https://leetcode.com/kavithan",
-                "linkedin": "https://linkedin.com/in/kavithan",
-                "resume": "https://kite.ac.in/resumes/7177222104.pdf",
-                "skills": ["NLP", "HuggingFace", "Python", "Streamlit", "NLTK"],
-                "attendance": 93.0
-            },
-
-            # --- Batch 3: 2nd Year AI & DS Batch ---
-            {
-                "name": "Naveen Kumar",
-                "email": "naveen.k@kite.ac.in",
-                "password": "student123",
-                "roll": "7177232101",
-                "batch": batch3_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/naveenk-2nd",
-                "leetcode": "https://leetcode.com/naveenk",
-                "linkedin": "https://linkedin.com/in/naveenk",
-                "resume": "https://kite.ac.in/resumes/7177232101.pdf",
-                "skills": ["Python", "C++", "Data Structures", "HTML/CSS"],
-                "attendance": 87.0
+                "full_name": "AMITH ADITYA C P",
+                "roll_number": "23CB04",
+                "email": "23cb04amithaditya@soi.kgkite.ac.in",
+                "department": "B.TECH CSBS",
+                "role_choice": "Data Engineer / Data Analyst",
+                "skills": ["Python", "Excel", "SQL", "Power BI", "ETL", "ML", "Cloud"],
+                "projects": [
+                    {"title": "AI - Farmer Assistant", "desc": "AI assistance bot for local farmers."},
+                    {"title": "Early detection of mastitis in dairy cows", "desc": "ML model for early detection of mastitis disease."},
+                    {"title": "Online Polling System", "desc": "Secure blockchain-inspired polling platform."}
+                ],
+                "company_name": "Mindtree",
+                "package_lpa": 5.5
             },
             {
-                "name": "Meera Ramesh",
-                "email": "meera.r@kite.ac.in",
-                "password": "student123",
-                "roll": "7177232102",
-                "batch": batch3_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/meerar",
-                "leetcode": "https://leetcode.com/meera_r",
-                "linkedin": "https://linkedin.com/in/meerar",
-                "resume": "https://kite.ac.in/resumes/7177232102.pdf",
-                "skills": ["Python", "SQL", "Pandas", "Matplotlib"],
-                "attendance": 95.5
+                "full_name": "Yogiram K V",
+                "roll_number": "23AIB60",
+                "email": "23aib60yogiram@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer / Data Analyst / Data Scientist",
+                "skills": ["Python", "Excel", "SQL", "Power BI", "Kafka", "ML", "Flask", "Linux"],
+                "projects": [
+                    {"title": "Interactive Data Analytics Platform", "desc": "Real-time streaming analytics platform using Apache Kafka."},
+                    {"title": "Stock market sentiment analysis companion", "desc": "NLP sentiment analysis on stock news and Twitter feeds."},
+                    {"title": "Facial Recognition Attendance Solution", "desc": "Real-time OpenCV facial recognition for class attendance."}
+                ],
+                "company_name": "Kaar Technologies",
+                "package_lpa": 6.8
             },
             {
-                "name": "Gokul Prasad",
-                "email": "gokul.p@kite.ac.in",
-                "password": "student123",
-                "roll": "7177232103",
-                "batch": batch3_name,
-                "status": "Unplaced",
-                "tier": "N/A",
-                "company": None,
-                "package": 0.0,
-                "github": "https://github.com/gokulp",
-                "leetcode": "https://leetcode.com/gokul_p",
-                "linkedin": "https://linkedin.com/in/gokulp",
-                "resume": "https://kite.ac.in/resumes/7177232103.pdf",
-                "skills": ["Python", "Data Structures", "OpenCV Basics"],
-                "attendance": 89.2
+                "full_name": "HAMSINI A",
+                "roll_number": "23CSA30",
+                "email": "23csa30hamsini@soi.kgkite.ac.in",
+                "department": "B.E. CSE",
+                "role_choice": "AI/ML Engineer, Software Developer, GenAI Engineer",
+                "skills": ["Python", "SQL", "ML", "DL", "CV", "LLM", "RAG", "Gen AI", "Prompt Engineering", "Docker", "Flask"],
+                "projects": [
+                    {"title": "AI-Powered Assessment Recommender System", "desc": "Recommends personalized learning tests based on student performance."},
+                    {"title": "Real-Time Sign Language Recognition & Translation", "desc": "OpenCV + LSTM Sign language to speech translation."},
+                    {"title": "AI-Powered Corporate FP&A Copilot", "desc": "Financial planning copilot parsing balance sheets with LLMs."},
+                    {"title": "CAD Difference Spotter (DiffCAD)", "desc": "Computer vision tool detecting geometric variances in engineering drawings."},
+                    {"title": "AI Resume Skill Analyzer", "desc": "Extracts candidate skills and matches against job descriptions."}
+                ],
+                "company_name": "Zoho Corporation",
+                "package_lpa": 8.8
+            },
+            {
+                "full_name": "SANJAY B",
+                "roll_number": "23AIB21",
+                "email": "23aib21sanjay@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer / Data Analyst / Data Scientist / ML Engineer",
+                "skills": ["Python", "SQL", "Excel", "Power BI", "ML", "ETL"],
+                "projects": [
+                    {"title": "Traveller Analytics Dashboard and Insight System", "desc": "Tourism trend prediction and visitor demographic analytics."},
+                    {"title": "Legal law assistant", "desc": "RAG powered assistant trained on Indian Penal Code statutes."}
+                ],
+                "company_name": "Hexaware",
+                "package_lpa": 5.4
+            },
+            {
+                "full_name": "PRIYADARSAN P",
+                "roll_number": "23AIB07",
+                "email": "23aib07priyadarsan@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer / Data Analyst / Data Scientist",
+                "skills": ["Python", "Excel", "SQL", "Power BI"],
+                "projects": [
+                    {"title": "Brain Tumor Analysis System", "desc": "Segmentation of MRI brain scans using U-Net architecture."},
+                    {"title": "Expense tracker dashboard", "desc": "Personal finance and budgeting visualization."}
+                ],
+                "company_name": "Sify Technologies",
+                "package_lpa": 5.2
+            },
+            {
+                "full_name": "ADITHYA S",
+                "roll_number": "23CSA06",
+                "email": "23csa06adithya@soi.kgkite.ac.in",
+                "department": "B.E. CSE",
+                "role_choice": "Software Engineer (SWE), Full-Stack Developer",
+                "skills": ["Python", "SQL", "JavaScript", "React.js", "Node.js", "Django", "Flask", "Docker", "Git"],
+                "projects": [
+                    {"title": "Drowsiness Detection System", "desc": "Real-time webcam driver drowsiness detection with alarm system."},
+                    {"title": "Diabetic Retinopathy Detection", "desc": "Deep learning fundus image classification for eye disease."}
+                ],
+                "company_name": "Accenture",
+                "package_lpa": 6.5
+            },
+            {
+                "full_name": "VARSHINI JANAKI K",
+                "roll_number": "23IT61",
+                "email": "23it61varshini@soi.kgkite.ac.in",
+                "department": "B.TECH IT",
+                "role_choice": "Software Developer, Data Engineer, AI Engineer",
+                "skills": ["Python", "SQL", "Power BI", "NLP", "ML", "RAG"],
+                "projects": [
+                    {"title": "AI Citation & Hallucination Guardrail System", "desc": "Evaluates LLM outputs to prevent factual hallucinations."},
+                    {"title": "AI Auditing & Finance Tracking", "desc": "Automated receipt parsing and invoice anomaly detection."},
+                    {"title": "Mental Health Chatbot", "desc": "Empathetic mental health conversation bot."}
+                ],
+                "company_name": "Thoughtworks",
+                "package_lpa": 9.0
+            },
+            {
+                "full_name": "Kanishka P",
+                "roll_number": "23AIA44",
+                "email": "23aia44kanishka@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Software Engineer, AI Engineer, ML Engineer",
+                "skills": ["Python", "Excel", "SQL", "Power BI", "HTML", "CSS", "Flask", "NLP", "Transformers", "LSTM", "EDA"],
+                "projects": [
+                    {"title": "CNN-LSTM Intrusion Detection System (IDS)", "desc": "Network traffic anomaly detection using CNN-LSTM."},
+                    {"title": "News Summarizer", "desc": "Automated news summarizer with Flask API."},
+                    {"title": "Book Recommendation System", "desc": "Collaborative filtering book recommendation engine."}
+                ],
+                "company_name": "Capgemini",
+                "package_lpa": 6.2
+            },
+            {
+                "full_name": "NARMADHA B",
+                "roll_number": "23AIA61",
+                "email": "23aia61narmadha@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "Data Engineer, Data Analyst, ML Engineer",
+                "skills": ["Python", "SQL", "Excel", "Power BI", "ML", "Deep Learning", "OpenCV", "LSTM"],
+                "projects": [
+                    {"title": "Social Media & Retail Sales Analysis Dashboard", "desc": "Combined sentiment and retail point-of-sale analytics."},
+                    {"title": "Calorie Burn Predictor", "desc": "Fitness tracker calorie prediction algorithm."},
+                    {"title": "PDF Visualization Summarizer", "desc": "Converts PDF documents into interactive visual graphs."}
+                ],
+                "company_name": "NTT Data",
+                "package_lpa": 5.8
+            },
+            {
+                "full_name": "MAHADARSHINI S",
+                "roll_number": "23AIA53",
+                "email": "23aia53mahadarshini@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "ML Engineer, Software Engineer, AI Engineer",
+                "skills": ["Python", "Java", "React", "Flask", "SQL", "OpenCV", "LLM"],
+                "projects": [
+                    {"title": "AI Coaching Voice Agent", "desc": "Speech-to-speech AI mock interviewer for placement training."},
+                    {"title": "Accident Detection and Emergency Alert System", "desc": "OpenCV highway accident detector sending instant SMS alert."}
+                ],
+                "company_name": "Renault Nissan",
+                "package_lpa": 6.4
+            },
+            {
+                "full_name": "SANJAY AKASH V",
+                "roll_number": "23AIB25",
+                "email": "23aib25sanjayakash@soi.kgkite.ac.in",
+                "department": "B.TECH AI & DS",
+                "role_choice": "ML Engineer / AI Engineer / GenAI Engineer",
+                "skills": ["Python", "SQL", "Machine Learning", "RAG", "FAISS", "OpenCV", "Pandas", "NumPy", "Scikit-learn"],
+                "projects": [
+                    {"title": "AI Legal Help Desk (RAG + FAISS)", "desc": "High speed FAISS vector search across legal databases."},
+                    {"title": "AI Referee Assistance System (YOLOv8 + CV)", "desc": "Offside and ball tracking for sports matches using YOLOv8."},
+                    {"title": "Exoplanet Detection using NASA Kepler Dataset", "desc": "Machine learning prediction of exoplanets from light curves."}
+                ],
+                "company_name": "LTI Mindtree",
+                "package_lpa": 7.5
+            },
+            {
+                "full_name": "Dharun Kumar S",
+                "roll_number": "23IT09",
+                "email": "23it09dharunkumar@soi.kgkite.ac.in",
+                "department": "B.TECH IT",
+                "role_choice": "AI Engineer / ML Engineer / GenAI Engineer",
+                "skills": ["Python", "SQL", "PyTorch", "TensorFlow", "FastAPI", "React", "Deep Learning", "NLP", "RAG", "HuggingFace", "Vector DBs"],
+                "projects": [
+                    {"title": "Intelligent Document Question Answering System", "desc": "Enterprise document Q&A engine handling complex PDF tables."},
+                    {"title": "Waste Type Classification (IIT Hyderabad Internship)", "desc": "YOLOv8 image classification sorting recyclable waste."},
+                    {"title": "Weather Trend Prediction", "desc": "Time-series forecasting model for local rainfall."},
+                    {"title": "AI-Based Ancient Tamil Script Translation", "desc": "Deep learning OCR translating ancient Palm-leaf Inscriptions."},
+                    {"title": "Dynamic Player Transfer Value Prediction", "desc": "Sports analytics model predicting football player market values."}
+                ],
+                "company_name": "Bosch Global Software",
+                "package_lpa": 8.2
             }
         ]
 
-        created_student_users = []
-        for sspec in student_specs:
-            user = User(
-                email=sspec["email"],
-                password_hash=get_password_hash(sspec["password"]),
-                full_name=sspec["name"],
+        for s_data in placement_students_data:
+            user = models.User(
+                email=s_data["email"],
+                password_hash=get_password_hash("student123"),
+                full_name=s_data["full_name"],
                 role="student",
-                avatar_url=f"https://api.dicebear.com/7.x/avataaars/svg?seed={sspec['roll']}"
+                avatar_url=f"https://api.dicebear.com/7.x/avataaars/svg?seed={s_data['roll_number']}"
             )
             db.add(user)
-            db.commit()
+            db.flush()
 
-            sp = StudentProfile(
+            tier = "Tier 1" if s_data["package_lpa"] >= 7.5 else ("Tier 2" if s_data["package_lpa"] >= 6.0 else "Tier 3")
+
+            sp = models.StudentProfile(
                 user_id=user.id,
-                roll_number=sspec["roll"],
-                batch=sspec["batch"],
-                department="AI & DS",
-                placement_status=sspec["status"],
-                company_tier=sspec["tier"],
-                company_name=sspec["company"],
-                package_lpa=sspec["package"],
-                github_url=sspec["github"],
-                leetcode_url=sspec["leetcode"],
-                linkedin_url=sspec["linkedin"],
-                resume_url=sspec["resume"],
-                skills=sspec["skills"],
-                attendance_pct=sspec["attendance"]
+                roll_number=s_data["roll_number"],
+                batch="SOI Placement Batch",
+                department=s_data["department"],
+                placement_status="Placed",
+                company_tier=tier,
+                company_name=s_data["company_name"],
+                package_lpa=s_data["package_lpa"],
+                github_url=f"https://github.com/{s_data['roll_number'].lower()}",
+                leetcode_url=f"https://leetcode.com/{s_data['roll_number'].lower()}",
+                linkedin_url=f"https://linkedin.com/in/{s_data['roll_number'].lower()}",
+                resume_url="https://drive.google.com/sample_resume",
+                skills=s_data["skills"],
+                attendance_pct=92.5
             )
             db.add(sp)
-            created_student_users.append((user, sspec["batch"]))
-        
-        db.commit()
+            db.flush()
 
-        # 4. Lab Projects / Prototypes
-        adithya_user = db.query(User).filter(User.email == "student@kite.ac.in").first()
-        priya_user = db.query(User).filter(User.email == "priya.r@kite.ac.in").first()
-        deepak_user = db.query(User).filter(User.email == "deepak.b@kite.ac.in").first()
+            for p_info in s_data["projects"]:
+                proj = models.LabProject(
+                    title=p_info["title"],
+                    description=p_info["desc"],
+                    tech_stack=s_data["skills"][:4],
+                    accuracy_metric="96.2% F1-Score",
+                    github_url=f"https://github.com/{s_data['roll_number'].lower()}/{p_info['title'].lower().replace(' ', '-')}",
+                    demo_url="https://demo.soi.kgkite.ac.in",
+                    status="Verified",
+                    batch="SOI Placement Batch",
+                    student_id=user.id,
+                    assigned_faculty_id=faculty_1.id
+                )
+                db.add(proj)
 
-        projects_data = [
-            LabProject(
-                title="KiTE-RAG: Autonomous Campus Knowledge Retrieval System",
-                description="End-to-end Retrieval Augmented Generation pipeline fine-tuned on KiTE academic syllabus and lab policy guidelines using Llama 3 8B and Milvus Vector Database.",
-                tech_stack=["PyTorch", "LangChain", "FastAPI", "Milvus", "Llama-3"],
-                accuracy_metric="96.8% ROUGE-L Score",
-                github_url="https://github.com/adithya-v-kite/kite-rag-llm",
-                demo_url="https://rag.kite.ac.in/demo",
-                status="Verified",
-                batch=batch1_name,
-                student_id=adithya_user.id if adithya_user else 1,
-                assigned_faculty_id=f1_user.id
-            ),
-            LabProject(
-                title="Real-Time Defect Detection in Industrial PCB Manufacturing",
-                description="Computer vision model deployed on Nvidia Jetson Orin Nano for inspecting micro-solder defects on high-speed SMT lines at 60 FPS.",
-                tech_stack=["YOLOv8", "OpenCV", "TensorRT", "C++", "Python"],
-                accuracy_metric="98.4% mAP@0.5",
-                github_url="https://github.com/priyar-ai/pcb-defect-vision",
-                demo_url="https://vision-pcb.kite.ac.in",
-                status="Verified",
-                batch=batch1_name,
-                student_id=priya_user.id if priya_user else 2,
-                assigned_faculty_id=f2_user.id
-            ),
-            LabProject(
-                title="Autonomous Rover Obstacle Avoidance via Depth Estimation",
-                description="Monocular depth estimation integrated with ROS2 navigation stack for mini-autonomous rover prototyping in KiTE Innovation Lab.",
-                tech_stack=["ROS2", "MiDaS Depth", "PyTorch", "Python", "Raspberry Pi 4"],
-                accuracy_metric="93.1% Depth Precision",
-                github_url="https://github.com/deepak-b/rover-depth-nav",
-                demo_url="https://rover-demo.kite.ac.in",
-                status="In Progress",
-                batch=batch2_name,
-                student_id=deepak_user.id if deepak_user else 7,
-                assigned_faculty_id=f2_user.id
-            )
+        # 4. Authentic 2nd Year Students (Transcribed from 2nd YRS Sheet)
+        second_year_students = [
+            {"name": "ANITHA K", "roll": "711724UAAD111", "email": "24uad111anitha@soi.kgkite.ac.in"},
+            {"name": "ANUSHA A", "roll": "711724UAAD112", "email": "24uad112anusha@soi.kgkite.ac.in"},
+            {"name": "BAVITHRA S", "roll": "711724UAAD118", "email": "24uad118bavithra@soi.kgkite.ac.in"},
+            {"name": "DHIVYA LAXMI S S", "roll": "711724UAAD127", "email": "24uad127dhivya@soi.kgkite.ac.in"},
+            {"name": "GOKUL P P", "roll": "711724UAAD131", "email": "24uad131gokul@soi.kgkite.ac.in"},
+            {"name": "GURUPRASATH S", "roll": "711724UAAD135", "email": "24uad135guru@soi.kgkite.ac.in"},
         ]
-        db.add_all(projects_data)
-        db.commit()
 
-        # 5. Lab Announcements
-        announcements = [
-            Announcement(
-                title="🚀 KiTE Innovation Lab GPU Server Reservation Policy",
-                content="All students in Batch 1 (SOI Placement) and Batch 2 (3rd Year) can now request SSH access to our dual Nvidia RTX 4090 GPU server for model training. Please submit your project abstract first.",
-                target_batch="All Batches",
-                priority="High",
-                posted_by_id=admin_user.id
-            ),
-            Announcement(
-                title="💼 Special SOI Mock Technical Interview Series",
-                content="Special technical interview training for SOI Placement Batch candidates starting this Saturday. Industry mentors from Tiger Analytics and Zoho will evaluate LLM & Vision coding rounds.",
-                target_batch=batch1_name,
-                priority="Urgent",
-                posted_by_id=f1_user.id
-            ),
-            Announcement(
-                title="🤖 2nd Year AI & DS Onboarding & Python Hackathon",
-                content="Welcome 2nd Year students to the AI & DS Innovation Hub! Join the introductory Python & OpenCV 24-Hour Mini-Hackathon next weekend.",
-                target_batch=batch3_name,
-                priority="Normal",
-                posted_by_id=f2_user.id
+        for s in second_year_students:
+            user = models.User(
+                email=s["email"],
+                password_hash=get_password_hash("student123"),
+                full_name=s["name"],
+                role="student",
+                avatar_url=f"https://api.dicebear.com/7.x/avataaars/svg?seed={s['roll']}"
             )
-        ]
-        db.add_all(announcements)
-        db.commit()
+            db.add(user)
+            db.flush()
 
-        # 6. Audit Logs
-        logs = [
-            AuditLog(
-                user_id=admin_user.id,
-                action="SYSTEM_INIT",
-                details="Initial KiTE AI & DS Lab Management Portal initialization completed.",
-                ip_address="127.0.0.1"
-            ),
-            AuditLog(
-                user_id=f1_user.id,
-                action="VERIFY_PROJECT",
-                details="Prof. K. Venkatesh verified 'KiTE-RAG: Autonomous Campus Knowledge Retrieval System'.",
-                ip_address="192.168.1.45"
-            ),
-            AuditLog(
-                user_id=admin_user.id,
-                action="BULK_STUDENT_IMPORT",
-                details="Imported 13 student profiles across Batch 1, 2, and 3.",
-                ip_address="127.0.0.1"
+            sp = models.StudentProfile(
+                user_id=user.id,
+                roll_number=s["roll"],
+                batch="2nd Year AI & DS Batch",
+                department="AI & DS",
+                placement_status="Unplaced",
+                company_tier="N/A",
+                company_name=None,
+                package_lpa=0.0,
+                skills=["Python", "Data Structures", "OpenCV", "Machine Learning"],
+                attendance_pct=94.0
             )
-        ]
-        db.add_all(logs)
-        db.commit()
+            db.add(sp)
+            db.flush()
 
-        print("Database successfully seeded with KiTE AI & DS sample data!")
+            proj = models.LabProject(
+                title=f"AI Prototype - {s['name'].split()[0]}",
+                description="2nd Year AI & DS vertical hands-on computer vision project.",
+                tech_stack=["Python", "OpenCV"],
+                accuracy_metric="92.0%",
+                status="Pending",
+                batch="2nd Year AI & DS Batch",
+                student_id=user.id,
+                assigned_faculty_id=faculty_2.id
+            )
+            db.add(proj)
+
+        # 5. Department Announcements
+        ann1 = models.Announcement(
+            title="School of Innovation - AI & DS Vertical Hackathon 2026",
+            content="Registration is now open for the annual AI & DS Innovation Hackathon. Submit your prototype projects via the portal for faculty verification.",
+            target_batch="All Batches",
+            priority="High",
+            posted_by_id=admin_user.id
+        )
+        db.add(ann1)
+
+        ann2 = models.Announcement(
+            title="SOI Placement Batch - Mock Technical Review",
+            content="All SOI placement batch students must ensure their GitHub, LeetCode, and project repository URLs are updated in their portfolio profile before Friday.",
+            target_batch="SOI Placement Batch",
+            priority="Urgent",
+            posted_by_id=admin_user.id
+        )
+        db.add(ann2)
+
+        db.commit()
+        print("Database populated successfully with authentic AI & DS student data!")
+
     except Exception as e:
-        print(f"Error seeding database: {e}")
         db.rollback()
+        print(f"Error seeding database: {e}")
+        raise e
     finally:
         db.close()
 
 if __name__ == "__main__":
-    seed_db()
+    seed_database()

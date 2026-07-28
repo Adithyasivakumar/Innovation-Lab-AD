@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Shield, Users, GraduationCap, ArrowRight, Lock, Mail, Award, CheckCircle2, Sparkles } from "lucide-react";
+import { Shield, Users, GraduationCap, ArrowRight, Lock, Mail, BrainCircuit, Sparkles } from "lucide-react";
 
 export const LoginView: React.FC = () => {
   const { login, demoLogin } = useAuth();
@@ -22,7 +22,7 @@ export const LoginView: React.FC = () => {
       setEmail("faculty1@kite.ac.in");
       setPassword("faculty123");
     } else {
-      setEmail("student@kite.ac.in");
+      setEmail("23aia09anushwathi@soi.kgkite.ac.in");
       setPassword("student123");
     }
   };
@@ -41,23 +41,20 @@ export const LoginView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-between antialiased">
-      {/* College Institutional Banner Header */}
+      {/* School of Innovation Institutional Banner Header */}
       <header className="bg-[#0b132b] text-white py-4 px-6 shadow-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black text-xl px-3.5 py-1.5 rounded-xl shadow-md border border-blue-500/40 tracking-wider">
-              KiTE
+            <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-800 text-white font-black text-xl px-3.5 py-2 rounded-2xl shadow-lg border border-blue-400/40 tracking-wider flex items-center justify-center gap-1.5 shrink-0">
+              <BrainCircuit className="w-5 h-5 text-amber-300" /> SoI
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-extrabold text-lg text-white leading-tight tracking-tight">
-                  KGiSL Institute of Technology
-                </h1>
-                <span className="bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <Award className="w-3 h-3 text-amber-400" /> NAAC A Grade
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">Department of Artificial Intelligence & Data Science</p>
+              <h1 className="font-black text-lg md:text-xl text-white tracking-tight leading-none">
+                School of Innovation
+              </h1>
+              <p className="text-xs font-bold text-blue-400 mt-1">
+                Artificial Intelligence and Data Science Vertical
+              </p>
             </div>
           </div>
         </div>
@@ -71,8 +68,8 @@ export const LoginView: React.FC = () => {
             <div className="w-12 h-12 bg-blue-600/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mx-auto mb-2 text-blue-400 shadow-inner">
               <Sparkles className="w-6 h-6" />
             </div>
-            <h2 className="text-xl font-bold tracking-tight">Innovation Lab Portal Login</h2>
-            <p className="text-xs text-slate-400">Secure institutional authentication for AI & DS department</p>
+            <h2 className="text-xl font-bold tracking-tight">AI & DS Vertical Portal Login</h2>
+            <p className="text-xs text-slate-400">School of Innovation authentication</p>
           </div>
 
           {/* Form Content */}
@@ -131,7 +128,7 @@ export const LoginView: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="ent-input pl-10"
-                    placeholder="name@kite.ac.in"
+                    placeholder="name@soi.kgkite.ac.in"
                   />
                 </div>
               </div>
@@ -201,8 +198,8 @@ export const LoginView: React.FC = () => {
 
       {/* Footer */}
       <footer className="bg-[#0b132b] text-slate-400 py-4 text-center text-xs border-t border-slate-800">
-        <p>© 2026 KGiSL Institute of Technology (KiTE). All rights reserved.</p>
-        <p className="text-[11px] text-slate-500 mt-0.5">Thudiyalur Road, Saravanampatti, Coimbatore – 641035</p>
+        <p>© 2026 School of Innovation (SoI) • AI & DS Vertical. All rights reserved.</p>
+        <p className="text-[11px] text-slate-500 mt-0.5">KGiSL Institute of Technology, Saravanampatti, Coimbatore – 641035</p>
       </footer>
     </div>
   );

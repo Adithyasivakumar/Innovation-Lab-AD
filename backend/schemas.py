@@ -35,6 +35,20 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 # --- Student Profile Schemas ---
+class StudentCreate(BaseModel):
+    full_name: str
+    email: EmailStr
+    roll_number: str
+    batch: str = "2nd Year AI & DS Batch"
+    department: str = "AI & DS"
+    placement_status: str = "Unplaced"
+    company_tier: str = "N/A"
+    company_name: Optional[str] = None
+    package_lpa: float = 0.0
+    skills: List[str] = []
+    attendance_pct: float = 90.0
+    password: Optional[str] = "student123"
+
 class StudentProfileBase(BaseModel):
     roll_number: str
     batch: str

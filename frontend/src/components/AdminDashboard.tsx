@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { API_BASE, useAuth } from "@/context/AuthContext";
-import { Users, GraduationCap, Upload, Shield, Award, Activity, Layers, Download, PlusCircle, TrendingUp, Sparkles } from "lucide-react";
+import { Users, GraduationCap, Upload, Shield, Award, Activity, Layers, UserPlus, PlusCircle, TrendingUp, X } from "lucide-react";
 
 interface AdminDashboardProps {
   onOpenBulkUpload: () => void;
@@ -25,6 +25,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [annPriority, setAnnPriority] = useState("Normal");
   const [annBatch, setAnnBatch] = useState("All Batches");
   const [postingAnn, setPostingAnn] = useState(false);
+
+  // Add Single Student CRUD Modal state
+  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
+  const [sName, setSName] = useState("");
+  const [sEmail, setSEmail] = useState("");
+  const [sRoll, setSRoll] = useState("");
+  const [sBatch, setSBatch] = useState("2nd Year AI & DS Batch");
+  const [sDept, setSDept] = useState("B.TECH AI & DS");
+  const [sStatus, setSStatus] = useState("Unplaced");
+  const [sCompany, setSCompany] = useState("");
+  const [sPackage, setSPackage] = useState("0");
+  const [sSkills, setSSkills] = useState("");
+  const [sAttendance, setSAttendance] = useState("90");
+  const [creatingStudent, setCreatingStudent] = useState(false);
+  const [studentError, setStudentError] = useState("");
 
   const fetchAdminData = async () => {
     setLoading(true);
@@ -86,6 +101,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  const handleCreateStudentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreatingStudent(true);
+    setStudentError("");
+
+    try {
+      const skillsArr = sSkills.split(",").map((s) => s.trim()).filter(Boolean);
+      const res = await fetch(`${API_BASE}/students`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          full_name: sName,
+          email: sEmail,
+          roll_number: sRoll,
+          batch: sBatch,
+          department: sDept,
+          placement_status: sStatus,
+          company_name: sCompany || null,
+          package_lpa: parseFloat(sPackage) || 0.0,
+          skills: skillsArr,
+          attendance_pct: parseFloat(sAttendance) || 90.0,
+        }),
+      });
+
+      if (res.ok) {
+        setShowAddStudentModal(false);
+        setSName("");
+        setSEmail("");
+        setSRoll("");
+        setSCompany("");
+        setSPackage("0");
+        setSSkills("");
+        fetchAdminData();
+      } else {
+        const errData = await res.json();
+        setStudentError(errData.detail || "Failed to create student.");
+      }
+    } catch (err) {
+      setStudentError("Network error while adding student.");
+    } finally {
+      setCreatingStudent(false);
+    }
+  };
+
   const overview = summary?.overview || {};
   const placement = summary?.placement_stats || {};
   const batchMetrics = summary?.batch_metrics || [];
@@ -102,22 +164,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             Welcome, {user?.full_name}
           </h2>
           <p className="text-xs text-slate-300 font-medium">
-            Administrative control center for AI & DS department • Batch statistics & roster management
+            School of Innovation • Artificial Intelligence & Data Science Vertical Dashboard
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => setShowAddStudentModal(true)}
+            className="btn-primary text-xs gap-1.5 shadow-md font-bold"
+          >
+            <UserPlus className="w-4 h-4" /> Add Single Student
+          </button>
+
+          <button
+            onClick={onOpenBulkUpload}
+            className="btn-secondary text-xs gap-1.5 shadow-sm font-bold"
+          >
+            <Upload className="w-4 h-4 text-blue-600" /> Bulk CSV Import
+          </button>
+
           <button
             onClick={() => setShowAnnModal(true)}
             className="btn-secondary text-xs gap-1.5 shadow-sm font-bold"
           >
-            <PlusCircle className="w-4 h-4 text-blue-600" /> Post Department Notice
-          </button>
-          <button
-            onClick={onOpenBulkUpload}
-            className="btn-primary text-xs gap-1.5 shadow-md font-bold"
-          >
-            <Upload className="w-4 h-4" /> Bulk Import Students
+            <PlusCircle className="w-4 h-4 text-amber-600" /> Post Notice
           </button>
         </div>
       </div>
@@ -224,6 +294,170 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
         </div>
       </div>
+
+      {/* ADD SINGLE STUDENT MODAL */}
+      {showAddStudentModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-blue-600" /> Create New Student Record
+              </h3>
+              <button onClick={() => setShowAddStudentModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateStudentSubmit} className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Roll Number *</label>
+                  <input
+                    type="text"
+                    required
+                    value={sRoll}
+                    onChange={(e) => setSRoll(e.target.value)}
+                    placeholder="e.g. 23AIA09"
+                    className="ent-input font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={sName}
+                    onChange={(e) => setSName(e.target.value)}
+                    placeholder="e.g. Anushwathi R"
+                    className="ent-input"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Institutional Email *</label>
+                <input
+                  type="email"
+                  required
+                  value={sEmail}
+                  onChange={(e) => setSEmail(e.target.value)}
+                  placeholder="e.g. 23aia09anushwathi@soi.kgkite.ac.in"
+                  className="ent-input"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Academic Batch</label>
+                  <select
+                    value={sBatch}
+                    onChange={(e) => setSBatch(e.target.value)}
+                    className="ent-input"
+                  >
+                    <option value="SOI Placement Batch">SOI Placement Batch</option>
+                    <option value="3rd Year AI & DS Batch">3rd Year AI & DS Batch</option>
+                    <option value="2nd Year AI & DS Batch">2nd Year AI & DS Batch</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Department</label>
+                  <select
+                    value={sDept}
+                    onChange={(e) => setSDept(e.target.value)}
+                    className="ent-input"
+                  >
+                    <option value="B.TECH AI & DS">B.TECH AI & DS</option>
+                    <option value="B.TECH CSBS">B.TECH CSBS</option>
+                    <option value="B.E. CSE">B.E. CSE</option>
+                    <option value="B.TECH IT">B.TECH IT</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Placement Status</label>
+                  <select
+                    value={sStatus}
+                    onChange={(e) => setSStatus(e.target.value)}
+                    className="ent-input"
+                  >
+                    <option value="Unplaced">Unplaced</option>
+                    <option value="Placed">Placed</option>
+                    <option value="Higher Studies">Higher Studies</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Company Name</label>
+                  <input
+                    type="text"
+                    value={sCompany}
+                    onChange={(e) => setSCompany(e.target.value)}
+                    placeholder="e.g. Zoho Corporation"
+                    className="ent-input"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Package (LPA)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={sPackage}
+                    onChange={(e) => setSPackage(e.target.value)}
+                    className="ent-input"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Attendance %</label>
+                  <input
+                    type="number"
+                    value={sAttendance}
+                    onChange={(e) => setSAttendance(e.target.value)}
+                    className="ent-input"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Skills (Comma Separated)</label>
+                <input
+                  type="text"
+                  value={sSkills}
+                  onChange={(e) => setSSkills(e.target.value)}
+                  placeholder="Python, LangChain, PyTorch, RAG..."
+                  className="ent-input"
+                />
+              </div>
+
+              {studentError && (
+                <div className="p-2 rounded-lg bg-red-50 text-red-700 border border-red-200 text-center font-bold">
+                  {studentError}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddStudentModal(false)}
+                  className="btn-secondary text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingStudent}
+                  className="btn-primary text-xs"
+                >
+                  {creatingStudent ? "Saving Student..." : "Create Student Record"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Post Notice Modal */}
       {showAnnModal && (
