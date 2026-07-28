@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { API_BASE, useAuth } from "@/context/AuthContext";
-import { Search, Download, ArrowUpDown, ChevronLeft, ChevronRight, FileSpreadsheet, Trash2 } from "lucide-react";
+import { Search, Download, ArrowUpDown, ChevronLeft, ChevronRight, FileSpreadsheet, Trash2, Filter } from "lucide-react";
 
 export const DataGrid: React.FC = () => {
   const { token, user } = useAuth();
@@ -101,23 +101,33 @@ export const DataGrid: React.FC = () => {
 
   const totalPages = Math.ceil(total / limit) || 1;
 
+  const getInitials = (name: string) => {
+    if (!name) return "S";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="ent-card p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-blue-700" /> Student Data Matrix Directory
+              <FileSpreadsheet className="w-5 h-5 text-blue-600" /> Student Data Matrix Directory
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="text-xs text-slate-600 mt-1">
               Comprehensive student records for Batch 1 (SOI), Batch 2 (3rd Year), and Batch 3 (2nd Year).
             </p>
           </div>
 
           <button
             onClick={handleExportCSV}
-            className="btn-kite-primary text-xs flex items-center gap-2 shadow"
+            className="btn-primary text-xs gap-2 shadow-md"
           >
             <Download className="w-4 h-4" /> Export CSV Report
           </button>
@@ -126,13 +136,13 @@ export const DataGrid: React.FC = () => {
         {/* Filter Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
           <form onSubmit={handleSearchSubmit} className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400" />
             <input
               type="text"
               placeholder="Search Name, Roll, Email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="kite-input w-full pl-9"
+              className="ent-input pl-10"
             />
           </form>
 
@@ -143,7 +153,7 @@ export const DataGrid: React.FC = () => {
                 setSelectedBatch(e.target.value);
                 setPage(1);
               }}
-              className="kite-input w-full"
+              className="ent-input"
             >
               <option value="All">All Batches</option>
               <option value="SOI Placement Batch">Batch 1: SOI Placement</option>
@@ -159,7 +169,7 @@ export const DataGrid: React.FC = () => {
                 setSelectedStatus(e.target.value);
                 setPage(1);
               }}
-              className="kite-input w-full"
+              className="ent-input"
             >
               <option value="All">All Placement Statuses</option>
               <option value="Placed">Placed</option>
@@ -175,7 +185,7 @@ export const DataGrid: React.FC = () => {
                 setSelectedSkill(e.target.value);
                 setPage(1);
               }}
-              className="kite-input w-full"
+              className="ent-input"
             >
               <option value="All">All Skills</option>
               <option value="PyTorch">PyTorch</option>
@@ -189,16 +199,16 @@ export const DataGrid: React.FC = () => {
       </div>
 
       {/* Main Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="ent-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="kite-table text-xs">
+          <table className="ent-table">
             <thead>
               <tr>
-                <th className="cursor-pointer" onClick={() => handleSort("roll_number")}>
-                  <div className="flex items-center gap-1">Roll No <ArrowUpDown className="w-3 h-3" /></div>
+                <th className="cursor-pointer select-none" onClick={() => handleSort("roll_number")}>
+                  <div className="flex items-center gap-1">Roll No <ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                 </th>
-                <th className="cursor-pointer" onClick={() => handleSort("full_name")}>
-                  <div className="flex items-center gap-1">Student Name <ArrowUpDown className="w-3 h-3" /></div>
+                <th className="cursor-pointer select-none" onClick={() => handleSort("full_name")}>
+                  <div className="flex items-center gap-1">Student Name <ArrowUpDown className="w-3 h-3 text-slate-400" /></div>
                 </th>
                 <th>Batch</th>
                 <th>Status / Company</th>
@@ -211,28 +221,33 @@ export const DataGrid: React.FC = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-6 text-slate-500">Loading student records...</td>
+                  <td colSpan={8} className="text-center py-8 text-slate-500">Loading student records...</td>
                 </tr>
               ) : sortedStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-6 text-slate-500">No matching student records found.</td>
+                  <td colSpan={8} className="text-center py-8 text-slate-500">No matching student records found.</td>
                 </tr>
               ) : (
                 sortedStudents.map((s) => (
                   <tr key={s.id}>
                     <td className="font-mono font-bold text-blue-700">{s.roll_number}</td>
                     <td>
-                      <div className="font-bold text-slate-900">{s.full_name}</div>
-                      <div className="text-[10px] text-slate-500">{s.email}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center border border-blue-200 shrink-0">
+                          {getInitials(s.full_name)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900">{s.full_name}</div>
+                          <div className="text-xs text-slate-500">{s.email}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                        {s.batch}
-                      </span>
+                      <span className="badge-batch">{s.batch}</span>
                     </td>
                     <td>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                           s.placement_status === "Placed"
                             ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
                             : "bg-slate-100 text-slate-700"
@@ -241,7 +256,7 @@ export const DataGrid: React.FC = () => {
                         {s.placement_status}
                       </span>
                       {s.company_name && (
-                        <div className="text-[10px] text-slate-600 font-semibold mt-0.5">{s.company_name}</div>
+                        <div className="text-xs text-slate-600 font-semibold mt-0.5">{s.company_name}</div>
                       )}
                     </td>
                     <td className="font-bold text-emerald-700">
@@ -250,7 +265,7 @@ export const DataGrid: React.FC = () => {
                     <td className="max-w-xs">
                       <div className="flex flex-wrap gap-1">
                         {s.skills?.map((sk: string) => (
-                          <span key={sk} className="text-[9px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">
+                          <span key={sk} className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">
                             {sk}
                           </span>
                         ))}
@@ -261,7 +276,7 @@ export const DataGrid: React.FC = () => {
                       <td className="text-center">
                         <button
                           onClick={() => handleDeleteStudent(s.id, s.roll_number)}
-                          className="p-1 text-slate-400 hover:text-red-600 rounded transition"
+                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
                           title="Delete Record"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -278,14 +293,14 @@ export const DataGrid: React.FC = () => {
         {/* Footer Pagination */}
         <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
           <div>
-            Showing <span className="font-bold text-slate-900">{sortedStudents.length}</span> of <span className="font-bold text-slate-900">{total}</span> records
+            Showing <strong className="text-slate-900">{sortedStudents.length}</strong> of <strong className="text-slate-900">{total}</strong> records
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="p-1.5 rounded bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition"
+              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -295,7 +310,7 @@ export const DataGrid: React.FC = () => {
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="p-1.5 rounded bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition"
+              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-100 transition shadow-xs"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

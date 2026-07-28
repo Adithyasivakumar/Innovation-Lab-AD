@@ -4,100 +4,153 @@
   body {
     background-color: #f8fafc;
     color: #0f172a;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Institutional Card Styling */
-.kite-card {
+/* Enterprise Card & Component Styling */
+.ent-card {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s ease-in-out;
 }
 
-.kite-card-header {
+.ent-card:hover {
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+}
+
+.ent-card-header {
   border-bottom: 1px solid #f1f5f9;
-  padding: 1rem 1.25rem;
-  background-color: #ffffff;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
 }
 
-/* KiTE Navy Header */
-.kite-header-bg {
-  background-color: #0f172a;
-  color: #ffffff;
-}
-
-/* Buttons & Accents */
-.btn-kite-primary {
-  background-color: #1d4ed8;
+/* Button Styling */
+.btn-primary {
+  background: linear-gradient(185deg, #2563eb 0%, #1d4ed8 100%);
   color: #ffffff;
   font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  border-radius: 0.625rem;
+  padding: 0.5rem 1.125rem;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.2);
   transition: all 0.15s ease-in-out;
+  display: inline-flex;
+  items-center: center;
+  justify-content: center;
 }
-.btn-kite-primary:hover {
-  background-color: #1e40af;
+.btn-primary:hover {
+  background: linear-gradient(185deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 4px 10px 0 rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
 }
 
-.btn-kite-secondary {
-  background-color: #f1f5f9;
-  color: #1e293b;
+.btn-secondary {
+  background-color: #ffffff;
+  color: #334155;
   font-weight: 600;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  border-radius: 0.625rem;
+  padding: 0.5rem 1.125rem;
+  font-size: 0.875rem;
   border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
   transition: all 0.15s ease-in-out;
+  display: inline-flex;
+  items-center: center;
+  justify-content: center;
 }
-.btn-kite-secondary:hover {
-  background-color: #e2e8f0;
+.btn-secondary:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
-/* Clean Input Styling */
-.kite-input {
+/* Input Styling */
+.ent-input {
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.875rem;
   color: #0f172a;
   font-size: 0.875rem;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: all 0.15s ease;
+  width: 100%;
 }
-.kite-input:focus {
+.ent-input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/* Table Styling */
-.kite-table {
+/* Badge Styling */
+.badge-placed {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.badge-pending {
+  background-color: #fffbebf5;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.badge-batch {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+/* Custom Table */
+.ent-table {
   width: 100%;
   text-align: left;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.kite-table th {
+.ent-table th {
   background-color: #f8fafc;
-  color: #475569;
+  color: #64748b;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.25rem;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.kite-table td {
-  padding: 0.75rem 1rem;
+.ent-table td {
+  padding: 1rem 1.25rem;
   border-bottom: 1px solid #f1f5f9;
   font-size: 0.875rem;
   color: #1e293b;
+  vertical-align: middle;
 }
 
-.kite-table tr:hover td {
+.ent-table tr:hover td {
   background-color: #f8fafc;
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { API_BASE, useAuth } from "@/context/AuthContext";
-import { Users, GraduationCap, Upload, Shield, Award, Activity, Layers, Download, PlusCircle } from "lucide-react";
+import { Users, GraduationCap, Upload, Shield, Award, Activity, Layers, Download, PlusCircle, TrendingUp, Sparkles } from "lucide-react";
 
 interface AdminDashboardProps {
   onOpenBulkUpload: () => void;
@@ -92,83 +92,95 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
-            <Shield className="w-3.5 h-3.5" /> Administrative Superuser Operations
+      {/* Top Banner Hero Card */}
+      <div className="bg-gradient-to-r from-[#0b132b] via-[#1c2541] to-[#1e3a8a] text-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full border border-blue-400/30 shadow-xs">
+            <Shield className="w-4 h-4 text-blue-400" /> Executive Admin Operations
           </div>
-          <h2 className="text-xl md:text-2xl font-bold text-slate-900 mt-1">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             Welcome, {user?.full_name}
           </h2>
-          <p className="text-xs text-slate-600">
-            Department of Artificial Intelligence & Data Science • Administrative Control & Analytics Summary
+          <p className="text-xs text-slate-300 font-medium">
+            Administrative control center for AI & DS department • Batch statistics & roster management
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowAnnModal(true)}
-            className="btn-kite-secondary text-xs flex items-center gap-1.5 shadow-sm"
+            className="btn-secondary text-xs gap-1.5 shadow-sm font-bold"
           >
-            <PlusCircle className="w-4 h-4 text-blue-700" /> Post Lab Notice
+            <PlusCircle className="w-4 h-4 text-blue-600" /> Post Department Notice
           </button>
           <button
             onClick={onOpenBulkUpload}
-            className="btn-kite-primary text-xs flex items-center gap-1.5 shadow"
+            className="btn-primary text-xs gap-1.5 shadow-md font-bold"
           >
             <Upload className="w-4 h-4" /> Bulk Import Students
           </button>
         </div>
       </div>
 
-      {/* 4 Summary Stats Cards */}
+      {/* 4 Summary Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-1">
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Enrolled Students</div>
-          <div className="text-2xl font-black text-slate-900">{overview.total_students || 0}</div>
-          <div className="text-[11px] text-blue-700 font-semibold">Spread across 3 batches</div>
+        <div className="ent-card p-5 space-y-2">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Total Students</span>
+            <Users className="w-4 h-4 text-blue-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-slate-900">{overview.total_students || 0}</div>
+          <div className="text-xs text-slate-500">Across 3 academic batches</div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-1">
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Placed SOI Students</div>
-          <div className="text-2xl font-black text-emerald-700">{placement.placed_count || 0}</div>
-          <div className="text-[11px] text-slate-500">Highest Package: <span className="font-bold text-slate-800">{placement.highest_package_lpa || 0} LPA</span></div>
+        <div className="ent-card p-5 space-y-2">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider">SOI Placed Count</span>
+            <TrendingUp className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-emerald-700">{placement.placed_count || 0}</div>
+          <div className="text-xs text-slate-500">Highest Package: <strong className="text-slate-800">{placement.highest_package_lpa || 0} LPA</strong></div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-1">
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Active Lab Prototypes</div>
-          <div className="text-2xl font-black text-blue-700">{overview.total_projects || 0}</div>
-          <div className="text-[11px] text-slate-500">Verified AI/DS Models</div>
+        <div className="ent-card p-5 space-y-2">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Active Prototypes</span>
+            <Layers className="w-4 h-4 text-blue-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-blue-700">{overview.total_projects || 0}</div>
+          <div className="text-xs text-slate-500">Verified AI/DS Models</div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-1">
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Average SOI Package</div>
-          <div className="text-2xl font-black text-amber-700">{placement.avg_package_lpa || 0} LPA</div>
-          <div className="text-[11px] text-slate-500">Tier 1 Recruiters: <span className="font-bold text-slate-800">{placement.tier1_count || 0}</span></div>
+        <div className="ent-card p-5 space-y-2">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Avg SOI Package</span>
+            <Award className="w-4 h-4 text-amber-500" />
+          </div>
+          <div className="text-3xl font-extrabold text-amber-700">{placement.avg_package_lpa || 0} LPA</div>
+          <div className="text-xs text-slate-500">Tier 1 Recruiters: <strong className="text-slate-800">{placement.tier1_count || 0}</strong></div>
         </div>
       </div>
 
-      {/* Batch Overview Matrix Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm flex items-center justify-between">
-          <span>Batch Wise Statistics Overview</span>
+      {/* Batch Overview Matrix */}
+      <div className="ent-card overflow-hidden">
+        <div className="p-5 border-b border-slate-100 font-bold text-slate-900 text-sm flex items-center justify-between">
+          <span>Batch Wise Performance Matrix</span>
           <button
             onClick={onNavigateDataGrid}
             className="text-xs font-bold text-blue-700 hover:underline"
           >
-            Open Full Data Matrix →
+            Open Full Student Directory →
           </button>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="kite-table text-xs">
+          <table className="ent-table">
             <thead>
               <tr>
                 <th>Batch Name</th>
                 <th>Total Students</th>
                 <th>Active Lab Users</th>
-                <th>Placed Students</th>
+                <th>Placed Count</th>
                 <th>Avg Attendance</th>
               </tr>
             </thead>
@@ -187,21 +199,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Audit Log Stream */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
+      {/* Activity Audit Log Stream */}
+      <div className="ent-card p-6 space-y-4">
         <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-3">
-          <Activity className="w-4 h-4 text-blue-700" /> Recent System Audit Logs
+          <Activity className="w-4 h-4 text-blue-600" /> System Audit & User Activity Stream
         </h3>
 
         <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
           {auditLogs.length === 0 ? (
-            <p className="text-xs text-slate-500 py-3 text-center">No recent audit log activity.</p>
+            <p className="text-xs text-slate-500 py-4 text-center">No recent activity logged.</p>
           ) : (
             auditLogs.map((log) => (
-              <div key={log.id} className="p-2.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+              <div key={log.id} className="p-3 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center justify-between text-xs">
                 <div className="space-x-2">
                   <span className="font-bold text-slate-900">{log.user_email}</span>
-                  <span className="text-slate-600">({log.action})</span>
+                  <span className="text-slate-600 font-medium">({log.action})</span>
                   <span className="text-slate-500 font-mono text-[11px]">{log.details}</span>
                 </div>
                 <span className="text-[10px] text-slate-400 font-mono">
@@ -216,12 +228,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Post Notice Modal */}
       {showAnnModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
             <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
-              Post Institutional Notice
+              Post Department Notice
             </h3>
 
-            <form onSubmit={handlePostAnnouncement} className="space-y-3 text-xs">
+            <form onSubmit={handlePostAnnouncement} className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-slate-700 font-bold mb-1">Notice Title</label>
                 <input
@@ -230,7 +242,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   value={annTitle}
                   onChange={(e) => setAnnTitle(e.target.value)}
                   placeholder="e.g. Innovation Lab Hackathon 2026"
-                  className="kite-input w-full"
+                  className="ent-input"
                 />
               </div>
 
@@ -242,7 +254,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   value={annContent}
                   onChange={(e) => setAnnContent(e.target.value)}
                   placeholder="Provide complete notice details..."
-                  className="kite-input w-full"
+                  className="ent-input"
                 />
               </div>
 
@@ -252,7 +264,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     value={annPriority}
                     onChange={(e) => setAnnPriority(e.target.value)}
-                    className="kite-input w-full"
+                    className="ent-input"
                   >
                     <option value="Normal">Normal</option>
                     <option value="High">High</option>
@@ -264,7 +276,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     value={annBatch}
                     onChange={(e) => setAnnBatch(e.target.value)}
-                    className="kite-input w-full"
+                    className="ent-input"
                   >
                     <option value="All Batches">All Batches</option>
                     <option value="SOI Placement Batch">SOI Placement Batch</option>
@@ -278,14 +290,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAnnModal(false)}
-                  className="btn-kite-secondary text-xs"
+                  className="btn-secondary text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={postingAnn}
-                  className="btn-kite-primary text-xs"
+                  className="btn-primary text-xs"
                 >
                   {postingAnn ? "Posting..." : "Post Notice"}
                 </button>
